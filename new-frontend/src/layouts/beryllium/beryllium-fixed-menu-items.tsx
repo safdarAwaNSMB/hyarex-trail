@@ -20,7 +20,6 @@ import {
   PiFeather,
   PiFileImage,
   PiFolderLock,
-  PiFolderNotch,
   PiGridFour,
   PiHammer,
   PiHeadset,
@@ -49,6 +48,7 @@ import {
   PiUserGear,
   PiUserPlus,
 } from 'react-icons/pi';
+import { IoFolderOpenOutline } from "react-icons/io5";
 import { atom } from 'jotai';
 
 export interface SubMenuItemType {
@@ -85,7 +85,7 @@ export const berylliumMenuItems: MenuItemsType[] = [
       {
         name: 'File Manager',
         href: '/',
-        icon: PiFolderNotch,
+        icon: IoFolderOpenOutline,
       },
       {
         name: 'Executive',

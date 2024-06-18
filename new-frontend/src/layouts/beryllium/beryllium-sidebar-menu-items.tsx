@@ -34,12 +34,12 @@ import {
   PiLockKey,
   PiChatCenteredDots,
   PiCurrencyCircleDollar,
-  PiFolderNotch,
   PiHouseLine,
   PiAirplaneTilt,
   PiPokerChip,
   PiBriefcase,
 } from 'react-icons/pi';
+import { IoFolderOpenOutline } from "react-icons/io5";
 
 // Note: do not add href in the label object, it is rendering as label
 export const berylliumSidebarMenuItems = [
@@ -51,7 +51,7 @@ export const berylliumSidebarMenuItems = [
   {
     name: 'File Manager',
     href: '/',
-    icon: <PiFolderNotch />,
+    icon: <IoFolderOpenOutline />,
   },
   {
     name: 'Executive',
@@ -236,7 +236,7 @@ export const berylliumSidebarMenuItems = [
   {
     name: 'File Manager',
     href: routes.file.manager,
-    icon: <PiFolderNotch />,
+    icon: <IoFolderOpenOutline />,
   },
   {
     name: 'Roles & Permissions',

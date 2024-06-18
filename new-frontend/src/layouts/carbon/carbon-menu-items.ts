@@ -21,7 +21,7 @@ import {
   PiFeatherDuotone,
   PiFileImageDuotone,
   PiFolderLockDuotone,
-  PiFolderNotchDuotone,
+  PiFolderOpenDuotone,
   PiGridFourDuotone,
   PiHammerDuotone,
   PiHeadsetDuotone,
@@ -47,6 +47,7 @@ import {
   PiUserPlusDuotone,
 } from 'react-icons/pi';
 import { atom } from 'jotai';
+import { IoFolderOpenOutline } from "react-icons/io5";
 
 export interface SubMenuItemType {
   name: string;
@@ -82,7 +83,7 @@ export const carbonMenuItems: MenuItemsType[] = [
       {
         name: 'File Manager',
         href: '/',
-        icon: PiFolderNotchDuotone,
+        icon: PiFolderOpenDuotone,
       },
       {
         name: 'Executive',

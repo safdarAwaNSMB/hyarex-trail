@@ -8,10 +8,9 @@ import { useCallback, useState } from 'react';
 import { useDropzone } from '@uploadthing/react/hooks';
 import { PiCheckBold, PiTrashBold, PiUploadSimpleBold } from 'react-icons/pi';
 import {
-  UploadFileResponse,
   generateClientDropzoneAccept,
 } from 'uploadthing/client';
-import { useUploadThing } from '@/utils/uploadthing';
+import {  useUploadThing } from '@/utils/uploadthing';
 import { Button, Text, FieldError } from 'rizzui';
 import cn from '@/utils/class-names';
 import UploadIcon from '@/components/shape/upload';
@@ -81,12 +80,12 @@ export default function UploadZone({
   const { startUpload, permittedFileInfo, isUploading } = useUploadThing(
     'generalMedia',
     {
-      onClientUploadComplete: (res: UploadFileResponse<any>[] | undefined) => {
+      onClientUploadComplete: (res: any | undefined) => {
         console.log('res', res);
         if (setValue) {
           // const respondedUrls = res?.map((r) => r.url);
           setFiles([]);
-          const respondedUrls = res?.map((r) => ({
+          const respondedUrls = res?.map((r : any) => ({
             name: r.name,
             size: r.size,
             url: r.url,
