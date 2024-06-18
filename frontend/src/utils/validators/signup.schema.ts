@@ -14,8 +14,8 @@ export const signUpSchema = z.object({
   email: validateEmail,
   password: validateNewPassword,
   confirmpassword: validateConfirmPassword,
-  isagreed: z.boolean(),
 });
+
 
 // generate form types from zod validation schema
 export type SignUpSchema = z.infer<typeof signUpSchema>;

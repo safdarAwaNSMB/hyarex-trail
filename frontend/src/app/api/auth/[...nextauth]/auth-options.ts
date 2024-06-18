@@ -6,6 +6,7 @@ import isEqual from 'lodash/isEqual';
 import { pagesOptions } from './pages-options';
 import toast from 'react-hot-toast';
 import axios from 'axios'
+import FacebookProvider from "next-auth/providers/facebook";
 
 export const authOptions: NextAuthOptions = {
   // debug: true,
@@ -75,5 +76,9 @@ export const authOptions: NextAuthOptions = {
       clientSecret: env.GOOGLE_CLIENT_SECRET || '',
       allowDangerousEmailAccountLinking: true,
     }),
+    FacebookProvider({
+      clientId: '703161572001911',
+      clientSecret: 'c1e1efdc96d96a6399e47a99f2efbc41'
+    })
   ],
 };

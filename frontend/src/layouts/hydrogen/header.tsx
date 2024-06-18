@@ -7,8 +7,19 @@ import Sidebar from '@/layouts/hydrogen/sidebar';
 import Logo from '@/components/logo';
 import HeaderMenuRight from '@/layouts/header-menu-right';
 import StickyHeader from '@/layouts/sticky-header';
+import SearchByImageWidget from '@/components/search/search-by-image';
+import { useSession } from 'next-auth/react';
+import { useEffect } from 'react';
+import { useLocation } from 'react-use';
 
 export default function Header() {
+  const session: any = useSession();
+  // let location;
+  // useEffect(() => {
+  //   location = window.location.pathname
+  // })
+  const location : any = useLocation();
+
   return (
     <StickyHeader className="z-[990] 2xl:py-5 3xl:px-8  4xl:px-10">
       <div className="flex w-full max-w-2xl items-center">
@@ -22,8 +33,12 @@ export default function Header() {
         >
           <Logo iconOnly={true} />
         </Link>
-
-        <SearchWidget />
+        {location?.pathname === "/" && session.data?.userData?.userrole !== 'admin' && (
+          <>
+            <SearchWidget />
+            <SearchByImageWidget />
+          </>
+        )}
       </div>
 
       <HeaderMenuRight />

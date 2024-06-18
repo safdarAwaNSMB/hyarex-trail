@@ -13,21 +13,12 @@ import WishlistDrawerView from './wishlist-drawer-view';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { Text } from 'rizzui';
+import { useAtom } from 'jotai';
+import { wishlist } from '@/store/atoms';
 
 const Drawer = dynamic(() => import('rizzui').then((module) => module.Drawer), {
   ssr: false,
 });
-
-
-// export async function getWishlistProducts(){
-//     const session : any = useSession();
-//     if(session?.data?.userData){
-//         const response : any = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/get-user-wishList/${session?.data?.userData?.id}`).catch(err => console.log(err));
-//         return response.data.wishlistProducts
-//     } else {
-//         return []
-//     }
-// }
 
 export default function WishlistDrawer() {
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -43,31 +34,29 @@ export default function WishlistDrawer() {
     routes.eCommerce.shop,
     routes.eCommerce.productDetails(params?.slug as string),
   ];
-  const [wishListProducts, setWishlistProducts] = useState<any[]>([]);
+  const [wishListProducts, setWishlistProducts] = useAtom(wishlist);
 
   const getData = async () => {
     if (session?.data?.userData) {
-      console.log('requesting');
-      
       const response: any = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/get-user-wishList/${session?.data?.userData?.id}`).catch(err => console.log(err));
-      console.log(response);
       setWishlistProducts(response?.data?.wishlistProducts)
     } else {
       return []
     }
   }
-  const removeItemFromWishlist = async (id : string | number)=>{
-    await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/delete-from-wishlist`, {userid : session?.data?.userData?.id, productid : id}).then(res => {
+  const removeItemFromWishlist = async (id: string | number) => {
+    await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/delete-from-wishlist`, { userid: session?.data?.userData?.id, productid: id }).then(res => {
+      setWishlistProducts(wishListProducts.filter((product: any) => product.num_iid !== id))
       toast.success(<Text as='b'>Removed from wishlist</Text>);
       getData();
     }).catch(err => {
       console.log(err);
-      
     })
   }
-  const isPathIncluded = includedPaths.some((path) => pathname === path);
+  const isPathIncluded = includedPaths?.some((path) => pathname === path);
   useEffect(() => {
     getData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
 

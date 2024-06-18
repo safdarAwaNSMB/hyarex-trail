@@ -1,15 +1,17 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useTable } from '@/hooks/use-table';
 import { useColumn } from '@/hooks/use-column';
 import { PiCaretDownBold, PiCaretUpBold } from 'react-icons/pi';
 import ControlledTable from '@/components/controlled-table';
-import { getColumns } from '@/app/shared/ecommerce/order/order-list/columns';
+import { getColumns, getQuotationsColumns, getWidgetColumns } from '@/app/shared/ecommerce/order/order-list/columns';
 import { ActionIcon } from 'rizzui';
 import cn from '@/utils/class-names';
 import ExpandedOrderRow from '@/app/shared/ecommerce/order/order-list/expanded-row';
+import { getAgentQuotations, getAllAgents, getAllQuotations, getCustomerQuotations } from '@/data/order-data';
+import { useSession } from 'next-auth/react';
 // dynamic import
 const FilterElement = dynamic(
   () => import('@/app/shared/ecommerce/order/order-list/filter-element'),
@@ -44,7 +46,7 @@ const filterState = {
 };
 
 export default function OrderTable({
-  data = [],
+  data,
   variant = 'modern',
   className,
 }: {
@@ -53,12 +55,40 @@ export default function OrderTable({
   className?: string;
 }) {
   const [pageSize, setPageSize] = useState(10);
-
+  const [quotations, setQuotations] = useState([]);
   const onHeaderCellClick = (value: string) => ({
     onClick: () => {
       handleSort(value);
     },
   });
+  const session: any = useSession();
+  const [isLoading, setIsLoading] = useState(true);
+  const [allAgents, setAllAgents] = useState<any>([]);
+  const getQuotationsList = async () => {
+    setIsLoading(true)
+    if(session.data?.userData.userrole === 'buyer'){
+      const data = await getCustomerQuotations(session.data?.userData?.email);
+      console.log(data);
+      
+      setQuotations(data)
+      setIsLoading(false);
+    } else if(session.data?.userData?.userrole === 'admin' ){
+      const data = await getAllQuotations();
+      const agents = await getAllAgents();
+      setAllAgents(agents)
+      setQuotations(data)
+      setIsLoading(false);
+    } else if(session.data?.userData?.userrole === 'agent' ){
+      const data = await getAgentQuotations(session.data?.userData?.email);
+      setQuotations(data)
+      setIsLoading(false);
+    }
+    setIsLoading(false)
+  } 
+  useEffect(() => {
+    getQuotationsList();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const onDeleteItem = useCallback((id: string) => {
     handleDelete(id);
@@ -66,7 +96,6 @@ export default function OrderTable({
   }, []);
 
   const {
-    isLoading,
     isFiltered,
     tableData,
     currentPage,
@@ -83,10 +112,11 @@ export default function OrderTable({
   } = useTable(data, pageSize, filterState);
 
   const columns = useMemo(
-    () => getColumns({ sortConfig, onHeaderCellClick, onDeleteItem }),
+    () => getQuotationsColumns({ sortConfig, onHeaderCellClick, onDeleteItem }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [onHeaderCellClick, sortConfig.key, sortConfig.direction, onDeleteItem]
   );
+  
 
   const { visibleColumns, checkedColumns, setCheckedColumns } =
     useColumn(columns);
@@ -97,43 +127,22 @@ export default function OrderTable({
         variant={variant}
         isLoading={isLoading}
         showLoadingText={true}
-        data={tableData}
+        data={quotations}
         // @ts-ignore
         columns={visibleColumns}
         expandable={{
           expandIcon: CustomExpandIcon,
-          expandedRowRender: (record) => <ExpandedOrderRow record={record} />,
+          expandedRowRender: (record) => <ExpandedOrderRow record={record} agents={allAgents} reloadFunction={getQuotationsList} />,
         }}
-        paginatorOptions={{
-          pageSize,
-          setPageSize,
-          total: totalItems,
-          current: currentPage,
-          onChange: (page: number) => handlePaginate(page),
-        }}
-        filterOptions={{
-          searchTerm,
-          onSearchClear: () => {
-            handleSearch('');
-          },
-          onSearchChange: (event) => {
-            handleSearch(event.target.value);
-          },
-          hasSearched: isFiltered,
-          hideIndex: 1,
-          columns,
-          checkedColumns,
-          setCheckedColumns,
-          enableDrawerFilter: true,
-        }}
-        filterElement={
-          <FilterElement
-            isFiltered={isFiltered}
-            filters={filters}
-            updateFilter={updateFilter}
-            handleReset={handleReset}
-          />
-        }
+        // paginatorOptions={{
+        //   pageSize,
+        //   setPageSize,
+        //   total: totalItems,
+        //   current: currentPage,
+        //   onChange: (page: number) => handlePaginate(page),
+        // }}
+        
+        
         className={
           'overflow-hidden rounded-md border border-muted text-sm shadow-sm [&_.rc-table-placeholder_.rc-table-expanded-row-fixed>div]:h-60 [&_.rc-table-placeholder_.rc-table-expanded-row-fixed>div]:justify-center [&_.rc-table-row:last-child_td.rc-table-cell]:border-b-0 [&_thead.rc-table-thead]:border-t-0'
         }

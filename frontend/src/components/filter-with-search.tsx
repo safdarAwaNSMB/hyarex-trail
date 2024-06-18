@@ -8,11 +8,15 @@ import {
   CheckboxGroup,
   Tooltip,
   Button,
+  Radio,
 } from 'rizzui';
 import cn from '@/utils/class-names';
 import { PiMagnifyingGlassBold, PiPlusBold, PiXBold } from 'react-icons/pi';
 import { generateSlug } from '@/utils/generate-slug';
 import { BsExclamationCircle } from 'react-icons/bs';
+import { genderData } from '@/app/shared/ecommerce/shop/shop-filters/filter-utils';
+import { useAtom } from 'jotai';
+import { filtersData } from '@/store/atoms';
 
 type FilterOptions = {
   name: string;
@@ -25,47 +29,39 @@ type FilterWithSearchProps = {
   title: string;
   name: string;
   data: FilterOptions[];
-  state: any;
+  state?: any;
   clearFilter?: (key: string[]) => void;
-  applyFilter: (query: string, value: any) => void;
+  applyFilter?: (query: string, value: any) => void;
 };
 
 export default function FilterWithSearch({
   title,
   name,
   data,
-  state,
-  clearFilter,
-  applyFilter,
 }: FilterWithSearchProps) {
-  const [isSearchOpen, setSearchOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [values, setValues] = useState<string[]>(
-    state[name]?.length ? state[name].split(',') : []
-  );
-  const [event, setEvent] = useState(false);
 
-  function handleOnChange(e: React.ChangeEvent<any>) {
-    setEvent(() => e.target.checked);
-  }
+  const [filters, setFilters] = useAtom(filtersData)
+
+  // function handleOnChange(e: React.ChangeEvent<any>) {
+  //   setEvent(() => e.target.checked);
+  // }
 
   // apply & clear filter
-  useEffect(() => {
-    if (values.length) applyFilter(name, values);
-    if (values.length == 0 && event !== true) {
-      clearFilter && clearFilter([name]);
-    }
+  // useEffect(() => {
+  //   if (values.length) applyFilter(name, values);
+  //   if (values.length == 0 && event !== true) {
+  //     clearFilter && clearFilter([name]);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [values]);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [values]);
-
-  const filteredData = data.filter((element) => {
-    if (searchTerm === '') {
-      return element;
-    } else {
-      return element.name.toLowerCase().includes(searchTerm);
-    }
-  });
+  // const filteredData = data.filter((element) => {
+  //   if (searchTerm === '') {
+  //     return element;
+  //   } else {
+  //     return element.name.toLowerCase().includes(searchTerm);
+  //   }
+  // });
 
   return (
     <>
@@ -75,7 +71,7 @@ export default function FilterWithSearch({
             {title}
           </Title>
 
-          {data!.length > 5 ? (
+          {/* {data!.length > 5 ? (
             <FilterOptionSearch
               title={title}
               isSearchOpen={isSearchOpen}
@@ -83,10 +79,25 @@ export default function FilterWithSearch({
               searchTerm={searchTerm}
               setSearchTerm={setSearchTerm}
             />
-          ) : null}
+          ) : null} */}
         </div>
 
-        <div className="flex flex-col pt-5">
+        <div className="flex flex-col space-y-4 pt-5">
+          {data?.map((item: any) => (
+            <Radio
+              key={`${item.name}-key-${item.id}`}
+              label={item.name}
+              name={item.name}
+              // value={item.slug}
+              checked={filters[name] === item.slug}
+              onChange={() => setFilters({...filters, [name] : item.slug})}
+              className="[&>label>span]:font-medium "
+              inputClassName="dark:checked:!bg-gray-300 dark:checked:!border-gray-300 dark:focus:ring-gray-300 dark:focus:ring-offset-gray-0"
+            />
+          ))}
+        </div>
+
+        {/* <div className="flex flex-col pt-5">
           <CheckboxGroup
             values={state[name]?.length ? state[name].split(',') : []}
             setValues={setValues}
@@ -147,7 +158,7 @@ export default function FilterWithSearch({
           {!filteredData.length ? (
             <div className="text-gray-500">No result found</div>
           ) : null}
-        </div>
+        </div> */}
       </div>
     </>
   );

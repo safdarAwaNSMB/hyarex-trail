@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { string, z } from 'zod';
 import { messages } from '@/config/messages';
 import {
   validateEmail,
@@ -9,11 +9,11 @@ import {
 // form zod validation schema
 export const resetPasswordSchema = z
   .object({
-    email: validateEmail,
+    verificationCode: z.string(),
     password: validatePassword,
-    confirmPassword: validateConfirmPassword,
+    confirmpassword: validateConfirmPassword,
   })
-  .refine((data) => data.password === data.confirmPassword, {
+  .refine((data) => data.password === data.confirmpassword, {
     message: messages.passwordsDidNotMatch,
     path: ['confirmPassword'], // Correct path for the confirmedPassword field
   });

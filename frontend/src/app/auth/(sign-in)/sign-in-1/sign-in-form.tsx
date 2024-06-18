@@ -107,14 +107,14 @@ export default function SignInForm() {
               error={errors.password?.message}
             />
             <div className="flex items-center justify-between pb-2">
-              <Checkbox
+              {/* <Checkbox
                 {...register('rememberMe')}
                 label="Remember Me"
                 variant="flat"
                 className="[&>label>span]:font-medium"
-              />
+              /> */}
               <Link
-                href={routes.auth.forgotPassword1}
+                href={routes.auth.forgotPassword2}
                 className="h-auto p-0 text-sm font-semibold text-blue underline transition-colors hover:text-gray-900 hover:no-underline"
               >
                 Forget Password?

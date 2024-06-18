@@ -47,7 +47,8 @@ import {
   PiBagSimpleDuotone,
   PiHandCoinsDuotone,
   PiWechatLogoDuotone,
-  PiBagDuotone
+  PiBagDuotone,
+  PiAddressBookDuotone
 } from 'react-icons/pi';
 
 
@@ -58,8 +59,13 @@ export const buyerMenuItems : any = [
     icon: <PiShoppingCartDuotone />,
   },
   {
-    name: 'Orders',
-    href: routes.eCommerce.orders,
+    name: 'Support',
+    href: routes.support.inbox,
+    icon: <PiWechatLogoDuotone />
+  },
+  {
+    name: 'Quotations',
+    href: '/quotations',
     icon: <PiBagDuotone />
   },
   {
@@ -77,11 +83,65 @@ export const buyerMenuItems : any = [
     href: routes.eCommerce.checkout,
     icon: <PiHandCoinsDuotone />
   },
+ 
   {
-    name: 'Inbox',
+    name: 'Real Estate',
+    href: routes.searchAndFilter.realEstate,
+    icon: <PiHouseLineDuotone />,
+  },
+  {
+    name: 'Flight Booking',
+    href: routes.searchAndFilter.flight,
+    icon: <PiAirplaneTiltDuotone />,
+  },
+  {
+    name: 'NFT',
+    href: routes.searchAndFilter.nft,
+    icon: <PiCoinDuotone />,
+  },
+
+]
+export const adminMenuItems : any = [
+  {
+    name: 'Dashboard',
+    href: '/',
+    icon: <PiHouseLineDuotone />,
+  },
+  {
+    name: 'Users',
+    href: '/users',
+    icon: <PiAddressBookDuotone />
+  },
+  {
+    name: 'Support',
     href: routes.support.inbox,
     icon: <PiWechatLogoDuotone />
   },
+  {
+    name: 'Quotations',
+    href: '/quotations',
+    icon: <PiBagDuotone />
+  },
+  {
+    name: 'Reviews',
+    href: routes.eCommerce.reviews,
+    icon: <PiStarDuotone />
+  },
+  {
+    name: 'Cart',
+    href: routes.eCommerce.cart,
+    icon: <PiBagSimpleDuotone />,
+  },
+  {
+    name: 'Checkout & Payment',
+    href: routes.eCommerce.checkout,
+    icon: <PiHandCoinsDuotone />
+  },
+  // {
+  //   name: 'Inbox',
+  //   href: routes.support.inbox,
+  //   icon: <PiWechatLogoDuotone />
+  // },
   {
     name: 'Real Estate',
     href: routes.searchAndFilter.realEstate,

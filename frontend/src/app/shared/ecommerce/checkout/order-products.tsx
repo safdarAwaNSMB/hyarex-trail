@@ -35,11 +35,11 @@ export default function OrderProducts({
   }
 
   return (
-    <SimpleBar className={cn('h-[calc(100vh_-_170px)] pb-3', className)}>
+    <SimpleBar style={{height : '50%', overflowY : 'scroll'}} className={cn('h-[calc(100vh_-_170px)] pb-3', className)}>
       <div className={cn('grid gap-3.5', className)}>
-        {items.map((item) => (
+        {items.map((item : any) => (
           <div
-            key={item.id}
+            key={item?.productData?.offerId}
             className={cn(
               'group relative flex items-center justify-between',
               itemClassName
@@ -48,8 +48,8 @@ export default function OrderProducts({
             <div className="flex items-center pe-3">
               <figure className="relative aspect-[4/4.5] w-16 shrink-0 overflow-hidden rounded-lg bg-gray-100">
                 <Image
-                  src={item.image}
-                  alt={item.name}
+                src={item?.productData?.productImage?.images[0]}
+                alt={item?.productData?.title}
                   fill
                   priority
                   sizes="(max-width: 768px) 100vw"
@@ -60,8 +60,8 @@ export default function OrderProducts({
                   <>
                     <span className="absolute inset-0 grid place-content-center bg-black/40 opacity-0 transition duration-300 group-hover:opacity-100" />
                     <RemoveItem
-                      clearItemFromCart={clearItemFromCart}
-                      product={item}
+                       clearItemFromCart={()=>{removeItemFromCart(item?.productId)}}
+                      product={item?.productData}
                       className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 transform rounded text-white opacity-0 transition duration-300 group-hover:opacity-100"
                     />
                   </>
@@ -74,27 +74,26 @@ export default function OrderProducts({
                 >
                   <Link
                     href={routes.eCommerce.productDetails(
-                      generateSlug(item.name)
+                      generateSlug(item?.productData?.offerId)
                     )}
                   >
-                    {item.name}
+                    {item?.productData?.subject}
                   </Link>
+                  
                 </Title>
                 <div className="text-gray-500">
-                  {toCurrency(item.price)} x {item.quantity}
+                 ${item?.productData?.productSaleInfo?.priceRangeList[0]?.price} X {item.quantity} = {toCurrency(item?.productData?.productSaleInfo?.priceRangeList[0]?.price * item.quantity)}
                 </div>
-                {showControls && (
+                {/* {showControls && (
                   <QuantityControl
                     product={item}
                     addItemToCart={addItemToCart}
                     removeItemFromCart={removeItemFromCart}
                   />
-                )}
+                )} */}
               </div>
             </div>
-            <div className="flex items-center gap-3 font-medium text-gray-700">
-              {toCurrency(item.price * item.quantity)}
-            </div>
+            
           </div>
         ))}
       </div>
@@ -137,14 +136,14 @@ function RemoveItem({
   className,
   clearItemFromCart,
 }: {
-  product: CartItem;
+  product: any;
   className?: string;
   clearItemFromCart: (id: number) => void;
 }) {
   return (
     <button
       className={cn('', className)}
-      onClick={() => clearItemFromCart(product.id)}
+      onClick={() => clearItemFromCart(product?.offerId)}
     >
       <PiTrash className="h-6 w-6" />
     </button>

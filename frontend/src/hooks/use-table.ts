@@ -87,7 +87,7 @@ export function useTable<T extends AnyObject>(
     const start = (currentPage - 1) * countPerPage;
     const end = start + countPerPage;
 
-    if (data.length > start) return data.slice(start, end);
+    if (data?.length > start) return data?.slice(start, end);
     return data;
   }
 
@@ -133,8 +133,7 @@ export function useTable<T extends AnyObject>(
     const searchTermLower = searchTerm.toLowerCase();
 
     return (
-      sortedData
-        .filter((item) => {
+      sortedData?.filter((item) => {
           const isMatchingItem = Object.entries(filters).some(
             ([columnId, filterValue]) => {
               if (
@@ -222,7 +221,7 @@ export function useTable<T extends AnyObject>(
   /*
    * Set isFiltered and final filtered data
    */
-  const isFiltered = applyFilters().length > 0;
+  const isFiltered = applyFilters()?.length > 0;
   function calculateTotalItems() {
     if (isFiltered) {
       return applyFilters().length;
@@ -230,7 +229,7 @@ export function useTable<T extends AnyObject>(
     if (searchTerm) {
       return searchedData().length;
     }
-    return sortedData.length;
+    return sortedData?.length;
   }
   const filteredAndSearchedData = isFiltered ? applyFilters() : searchedData();
   const tableData = paginatedData(filteredAndSearchedData);

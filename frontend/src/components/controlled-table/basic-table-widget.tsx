@@ -49,7 +49,7 @@ type BasicTableWidgetProps = {
 
 export default function BasicTableWidget({
   title,
-  data = [],
+  data,
   getColumns,
   pageSize = 7,
   setPageSize,
@@ -138,7 +138,7 @@ export default function BasicTableWidget({
       >
         <ControlledTable
           isLoading={isLoading}
-          data={tableData}
+          data={data}
           columns={visibleColumns}
           scroll={scroll}
           sticky={sticky}

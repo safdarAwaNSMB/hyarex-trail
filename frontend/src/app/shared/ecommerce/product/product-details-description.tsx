@@ -3,8 +3,11 @@
 import { Collapse, Title, Text } from 'rizzui';
 import cn from '@/utils/class-names';
 import { PiCaretDownBold, PiTagLight } from 'react-icons/pi';
+import { useAtomValue } from 'jotai';
+import { productToShow } from '@/store/atoms';
 
-export default function ProductDetailsDescription(product : any) {
+export default function ProductDetailsDescription() {
+  const product = useAtomValue(productToShow);
 
   return (
     <Collapse
@@ -18,7 +21,7 @@ export default function ProductDetailsDescription(product : any) {
         >
           Product Details
           <div className="flex shrink-0 items-center justify-center">
-            <PiCaretDownBold
+            See<PiCaretDownBold
               className={cn(
                 'h-[18px] w-[18px] transform transition-transform duration-300',
                 open && 'rotate-180'
@@ -28,10 +31,9 @@ export default function ProductDetailsDescription(product : any) {
         </div>
       )}
     >
-      <div className="-mt-2 pb-7">
-        {product?.product && (
-          <div dangerouslySetInnerHTML={{ __html: product?.product?.description.html }}>
-
+      <div className="mt-2 w-full pb-7">
+        {product?.description && (
+          <div className="w-full" dangerouslySetInnerHTML={{ __html: product?.description }}>
         </div>
           )}
         {/* <Text as="p" className="pb-2 leading-relaxed">

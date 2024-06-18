@@ -1,39 +1,58 @@
+import { productToShow } from '@/store/atoms';
+import { useAtomValue } from 'jotai';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import ProductDetailsDescription from './product-details-description';
 
 
 
-export default function ProductDetailsGallery(product: any) {
+export default function ProductDetailsGallery() {
+  const product = useAtomValue(productToShow);
   const [productImages, setProductImages] = useState<any>(null)
-  useEffect(()=>{
-    if(product.product){
+  const [showIndex, setShowIndex] = useState(0);
+  useEffect(() => {
+    if (product) {
       console.log('From Gallery');
-      console.log(product.product.item_imgs);
-      setProductImages(product.product.item_imgs);
+      console.log(product);
+
+      console.log(product.productImage.images);
+      setProductImages(product.productImage.images);
     }
   }, [product])
-  
+
   return (
-    <div className="grid grid-cols-2 gap-3 @md:gap-4 @xl:gap-5 @2xl:gap-7">
-      {productImages?.slice(0, 12)?.map((image : any, idx : number) => (
-        <div
-          key={`product-gallery-${idx}`}
-          className="relative mx-auto aspect-[4/4.65] overflow-hidden rounded bg-gray-100 @xl:rounded-md"
-        style={{
-          width : '280px',
-          height : '280px'
-        }}
-        >
-          <Image
-            fill
-            priority
-            src={image?.url}
-            alt={'Product Gallery'}
-            sizes="(max-width: 768px) 100vw"
-            className="h-full w-full object-cover"
-          />
-        </div>
-      ))}
+    <div>
+      <div className="relative mx-auto overflow-hidden rounded bg-gray-100 @xl:rounded-md" style={{
+        width: "400px",
+        height: "400px"
+      }}>
+        <Image
+          fill
+          priority
+          src={productImages ? productImages[showIndex] : ""}
+          alt={'Product Gallery'}
+          // sizes="(max-width: 768px) 100vw"
+          className="h-full w-full object-cover"
+        />
+      </div>
+      <div className='flex flex-row justify-start gap-1 w-full h-32 my-5'>
+        {productImages?.slice(0, 12)?.map((image: any, index: number) => (
+          <div
+            key={`product-gallery-${index}`}
+            className={`rounded ${showIndex === index && "border-2 border-black"} bg-gray-100 @xl:rounded-md`}
+            style={{
+              width: "130px"
+            }}
+            onClick={() => setShowIndex(index)}
+          >
+            <img
+              src={image}
+              alt={'Product Gallery'}
+            className='w-full h-full object-cover rounded @xl:rounded-md'
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

@@ -3,7 +3,13 @@ const cors = require('cors');
 const CreateUsersTable = require('./src/tables/usersTable');
 const userRoutes = require('./src/routes/userRoutes');
 const wishlistRoutes = require('./src/routes/wishlist');
+const supportRoutes = require('./src/routes/supportRoutes')
+const messagesRoutes = require('./src/routes/messagesRoutes')
+const quotationRoutes = require('./src/routes/quotationRoutes')
 const { CreateWishListsTable } = require('./src/tables/wishlists');
+const { CreateTicketsTable } = require('./src/tables/tickets');
+const { CreateMessagesTable } = require('./src/tables/messages');
+const { CreateQuotationsTable } = require('./src/tables/quotations');
 
 
 const app = express();
@@ -12,6 +18,7 @@ app.use(cors());
 // Automatically parse incoming JSON to an object so we can access it in our request handlers
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
 
 
 // const axios = require('axios');
@@ -52,10 +59,15 @@ app.use((req, res, next) => {
 });
 CreateUsersTable();
 CreateWishListsTable();
+CreateTicketsTable();
+CreateMessagesTable();
+CreateQuotationsTable();
 
 app.use(userRoutes)
 app.use(wishlistRoutes)
-
+app.use(supportRoutes)
+app.use(messagesRoutes)
+app.use(quotationRoutes)
 
 
 app.listen(4000, () => {

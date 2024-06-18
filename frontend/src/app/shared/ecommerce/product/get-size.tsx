@@ -4,11 +4,12 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { AdvancedRadio, FieldError, RadioGroup } from 'rizzui';
 import cn from '@/utils/class-names';
 
-export default function GetSize({ sizes }: { sizes?: number[] }) {
+export default function GetSize(sizes: any) {
   const {
     control,
     formState: { errors },
   } = useFormContext();
+console.log(sizes);
 
   return (
     <>
@@ -23,17 +24,17 @@ export default function GetSize({ sizes }: { sizes?: number[] }) {
               setValue={onChange}
               className="flex flex-wrap items-center gap-4"
             >
-              {sizes?.map((size) => (
+              {sizes?.length > 0 && sizes?.map((attribute: any) => (
                 <AdvancedRadio
-                  key={size}
-                  value={size}
+                  key={attribute.attributeId}
+                  value={attribute?.valueTrans}
                   contentClassName={cn(
                     'px-3 py-2 min-w-[unset] min-h-[unset] flex items-center justify-between content-classname',
-                    String(size) === String(value) &&
-                      'border-primary ring-primary ring-1'
+                    String(attribute.valueTrans) === String(attribute.valueTrans) &&
+                    'border-primary ring-primary ring-1'
                   )}
                 >
-                  {size}
+                  {attribute.valueTrans}
                 </AdvancedRadio>
               ))}
             </RadioGroup>

@@ -23,6 +23,8 @@ export default function SignInForm() {
   };
   const [reset, setReset] = useState({});
   const [showPlans, setShowPlans] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [choosingPlan, setChoosingPlan] = useState(false);
   const verifiedUser: string | undefined = Cookies.get('verifiedUser');
   useEffect(() => {
     if (verifiedUser) {
@@ -34,8 +36,8 @@ export default function SignInForm() {
   }, [verifiedUser])
   const parsedUser: any = verifiedUser ? JSON.parse(verifiedUser) : null;
   const choosePlan = async (plan: string) => {
+    setChoosingPlan(true);
     await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/assign-plan`, { ...parsedUser, userplan: plan }).then(res => {
-      console.log(res);
       toast.success('Thanks For choosing Plan!');
       Cookies.remove('verifiedUser');
       setShowPlans(false)
@@ -45,31 +47,36 @@ export default function SignInForm() {
       })
     }).catch(err => {
       console.log(err);
-    })
+    }).finally(()=> setChoosingPlan(false))
   }
   const onSubmit: SubmitHandler<LoginSchema> = async (data) => {
-    console.log(data);
-    const userResult: any = await axios.post(`http://localhost:4000/sign-in-user`, data).catch(err => {
-      if (err.response.status === 400) {
-        toast.error(err.response.data.message);
-        return
-      } else {
-        toast.error('Invalid Email or Password!');
+    if(!loading){
+      setLoading(true)
+      const userResult: any = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/sign-in-user`, data).catch(err => {
+        setLoading(false)
+        if (err.response.status === 400) {
+          toast.error(err.response.data.message);
+          return
+        } else {
+          toast.error('Invalid Email or Password!');
+          return
+        }
+      })
+      
+      if (userResult?.status === 200) {
+        if (userResult.data.user.userplan?.length > 0 && userResult.data.user.userplan !== "null") {
+          signIn('credentials', {
+            ...userResult.data.user,
+            callbackUrl: '/'
+          });
+        } else {
+          setLoading(false)
+          Cookies.set('verifiedUser', JSON.stringify(userResult.data.user), { expires: 1 });
+          setShowPlans(true)
+        }
         return
       }
-    });
-
-    if (userResult?.status === 200) {
-      if (userResult.data.user.userplan?.length > 0 && userResult.data.user.userplan !== "null") {
-        signIn('credentials', {
-          ...userResult.data.user,
-          callbackUrl: '/'
-        });
-      } else {
-        Cookies.set('verifiedUser', JSON.stringify(userResult.data.user), { expires: 1 });
-        setShowPlans(true)
-      }
-      return
+      setLoading(false)
     }
   };
 
@@ -105,21 +112,27 @@ export default function SignInForm() {
               error={errors.password?.message}
             />
             <div className="flex items-center justify-between pb-2">
-              <Checkbox
+              {/* <Checkbox
                 {...register('rememberMe')}
                 label="Remember Me"
                 className="[&>label>span]:font-medium"
-              />
+              /> */}
               <Link
-                href={routes.auth.forgotPassword1}
+                href={routes.auth.forgotPassword2}
                 className="h-auto p-0 text-sm font-semibold text-blue underline transition-colors hover:text-gray-900 hover:no-underline"
               >
                 Forget Password?
               </Link>
             </div>
             <Button className="w-full" type="submit" size="lg">
-              <span>Sign in</span>{' '}
-              <PiArrowRightBold className="ms-2 mt-0.5 h-5 w-5" />
+              {loading ? (
+                <div className="smallspinner"></div>
+              ) : (
+                <>
+                  <span>Sign in</span>{' '}
+                  <PiArrowRightBold className="ms-2 mt-0.5 h-5 w-5" />
+                </>
+              )}
             </Button>
           </div>
         )}
@@ -135,20 +148,20 @@ export default function SignInForm() {
       </Text>
       {showPlans && (
         <div className="overlay">
-          <div className="card red-card">
+          {/* <div className="card red-card">
             <h2>Simple</h2>
             <p>Some plan details here</p>
-            <button onClick={() => choosePlan('free')} className="bg-red-500 text-white px-4 py-2 rounded">Choose Plan</button>
+            <button onClick={() => choosePlan('free')} className="bg-red-500 text-white px-4 py-2 rounded">{choosingPlan === 'free' ? <div className="smallspinner"></div> : "Choose Plan" }</button>
           </div>
           <div className="card orange-card">
             <h2>Average</h2>
             <p>Some plan details here</p>
-            <button onClick={() => choosePlan('Average')} className="bg-orange-500 text-white px-4 py-2 rounded">Choose Plan</button>
-          </div>
+            <button onClick={() => choosePlan('Average')} className="bg-orange-500 text-white px-4 py-2 rounded">{choosingPlan === 'Average' ? <div className="smallspinner"></div> : "Choose Plan" }</button>
+          </div> */}
           <div className="card green-card">
-            <h2>Premium</h2>
+            <h2>Plan for You</h2>
             <p>Some plan details here</p>
-            <button onClick={() => choosePlan('Premium')} className="bg-green-500 text-white px-4 py-2 rounded">Choose Plan</button>
+            <button onClick={() => !choosingPlan && choosePlan('Premium')} className="bg-green-500 text-white px-4 py-2 rounded">{choosingPlan ? <div className="smallspinner"></div> : "Choose Plan" }</button>
           </div>
         </div>
       )}

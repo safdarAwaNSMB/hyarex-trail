@@ -33,13 +33,15 @@ export default function WishlistProducts({
       </div>
     );
   }
+  console.log(items);
+  
 
   return (
     <SimpleBar className={cn('h-[calc(100vh_-_170px)] pb-3', className)}>
       <div className={cn('grid gap-3.5', className)}>
         {items?.map((item) => (
           <div
-            key={item.num_iid}
+            key={item?.offerId}
             className={cn(
               'group relative flex items-center justify-between',
               itemClassName
@@ -48,8 +50,8 @@ export default function WishlistProducts({
             <div className="flex items-center pe-3">
               <figure className="relative aspect-[4/4.5] w-16 shrink-0 overflow-hidden rounded-lg bg-gray-100">
                 <Image
-                  src={item.pic_url}
-                  alt={item.title}
+                  src={item?.productImage?.images[0]}
+                  alt={item?.title}
                   fill
                   priority
                   sizes="(max-width: 768px) 100vw"
@@ -74,14 +76,14 @@ export default function WishlistProducts({
                 >
                   <Link
                     href={routes.eCommerce.productDetails(
-                      generateSlug(item.num_iid)
+                      generateSlug(item?.offerId)
                     )}
                   >
-                    {item.title}
+                    {item?.subject}
                   </Link>
                 </Title>
                 <div className="text-gray-500">
-                  {toCurrency(item.price)}
+                  {toCurrency(item?.productSaleInfo?.priceRangeList[0]?.price)}
                 </div>
                 {/* {showControls && (
                   <QuantityControl
@@ -144,7 +146,7 @@ function RemoveItem({
   return (
     <button
       className={cn('', className)}
-      onClick={() => clearItemFromCart(product?.num_iid)}
+      onClick={() => clearItemFromCart(product?.offerId)}
     >
       <PiTrash className="h-6 w-6" />
     </button>

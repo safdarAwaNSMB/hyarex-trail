@@ -1,56 +1,59 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Button } from 'rizzui';
+import { Button, Text } from 'rizzui';
 import cn from '@/utils/class-names';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
-import { Text } from 'rizzui';
 import toast from 'react-hot-toast';
+import { useAtom, useAtomValue } from 'jotai';
+import { productToShow, wishlist } from '@/store/atoms';
 
-export default function WishlistButton({ className, product }: { className?: string, product?: any }) {
+export default function WishlistButton({ className }: { className?: string }) {
   const [favorite, setFavorite] = useState<boolean>(false);
+  const product = useAtomValue(productToShow);
+  const [favoriteProducts, setFavoriteProducts] = useAtom(wishlist)
   const [addToWishlistLoader, setAddToWishlistLoader] = useState<boolean>(false);
-  const session : any = useSession();
-  useEffect(()=>{
+  const session: any = useSession();
+  useEffect(() => {
     checkFavorite();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-  const checkFavorite = async ()=>{
-    if(product && session?.data?.userData){
-      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/check-favorite`, {userid : session?.data?.userData?.id, productid : product?.num_iid}).then(res => {
-        console.log(res.data.favorite);
-        
-        if(res.data.favorite === true){
-          setFavorite(true);
-        } else {
-          setFavorite(false)
-        }
-      }).catch(err => {
-        console.log(err);
-      })
+  
+  const checkFavorite = async () => {
+    if (product && session?.data?.userData) {
+      const productExistinWishlist = favoriteProducts?.some((wishProduct: any) => wishProduct?.offerId === product?.offerId);
+      if(productExistinWishlist){
+        setFavorite(true)
+      } else {
+        setFavorite(false)
+      }
     }
   }
-  useEffect(()=>{
+  useEffect(() => {
     checkFavorite();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product, session])
+
+
   async function addToWishlist() {
     setAddToWishlistLoader(true);
-    await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/toggle-to-list`, { userid: session?.data?.userData?.id, productid : product?.num_iid }).then(res => {
-      console.log(res.data.added);
-      
-      if(res.data.added === true){
+    await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/toggle-to-list`, { userid: session?.data?.userData?.id, productid: product?.offerId }).then(res => {
+      setFavoriteProducts([...favoriteProducts, product])
+
+      if (res.data.added === true) {
         setFavorite(true)
         toast.success(<Text as="b">Added to Wishlist!</Text>)
-      } else if(res.data.added === false){
+      } else if (res.data.added === false) {
         setFavorite(false)
         toast.success(<Text as="b">Removed from Wishlist!</Text>)
       }
-      
+
     }).catch(err => {
       console.log(err);
-    }).finally(()=> setAddToWishlistLoader(false))
+    }).finally(() => setAddToWishlistLoader(false))
   }
-    
+
 
   return (
     <Button

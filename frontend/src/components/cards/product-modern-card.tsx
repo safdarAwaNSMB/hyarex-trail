@@ -17,6 +17,8 @@ export default function ProductModernCard({
   const {
     title,
     pic_url,
+    subjectTrans,
+    imageUrl,
     slug,
     num_iid,
     description,
@@ -28,14 +30,14 @@ export default function ProductModernCard({
     <div className={cn(className)}>
       <Link
         href={routes.eCommerce.productDetails(
-          String(slug ?? num_iid)
+          String(num_iid ? slug ?? num_iid : slug ?? product?.offerId)
         )}
       >
         <div className="relative">
-          <div className="relative mx-auto aspect-[4/5.06] w-full overflow-hidden rounded-lg bg-gray-100">
+          <div className="relative mx-auto aspect-[5/5] w-full overflow-hidden rounded-lg bg-gray-100">
             <Image
-              alt={title}
-              src={pic_url}
+              alt={subjectTrans}
+              src={pic_url || imageUrl}
               fill
               priority
               quality={90}
@@ -50,7 +52,7 @@ export default function ProductModernCard({
             as="h6"
             className="mb-1 truncate font-semibold transition-colors hover:text-primary"
           >
-            {title}
+            {title || subjectTrans}
           </Title>
           {product?.seller_info && (
             <Text as="p" className="text-base">
@@ -59,11 +61,8 @@ export default function ProductModernCard({
             </Text>
           )}
 
-          <Text as="p" className="truncate">
-            {description}
-          </Text>
           <div className="mt-2 flex items-center font-semibold text-gray-900">
-            {toCurrency(Number(price))}
+            {toCurrency(Number(price || product?.priceInfo?.price))}
             {sale_price && (
               <del className="ps-1.5 text-[13px] font-normal text-gray-500">
                 {toCurrency(Number(sale_price))}

@@ -569,6 +569,7 @@ select:-webkit-autofill:focus {
 
 .card {
   width: 300px;
+  height: 400px;
   padding: 20px;
   border-radius: 10px;
   margin: 10px;
@@ -584,10 +585,63 @@ select:-webkit-autofill:focus {
   background-color: #ffd699; /* Light orange */
   color: #ff6600; /* Orange text color */
 }
+.black-card {
+  background-color: #434343; /* Light orange */
+  color: #ffffff; /* Orange text color */
+}
 
 .green-card {
   background-color: #ccffcc; /* Light green */
   color: #00cc00; /* Green text color */
+}
+
+.spinner {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: radial-gradient(farthest-side,#000000 94%,#0000) top/9px 9px no-repeat,
+         conic-gradient(#0000 30%,#000000);
+  -webkit-mask: radial-gradient(farthest-side,#0000 calc(100% - 9px),#000 0);
+  animation: spinner-c7wet2 1s infinite linear;
+}
+
+@keyframes spinner-c7wet2 {
+  100% {
+     transform: rotate(1turn);
+  }
+}
+
+.smallspinner {
+  width: 24px;
+   height: 24px;
+   border-radius: 50%;
+   background: radial-gradient(farthest-side,#ffffff 94%,#0000) top/3.8px 3.8px no-repeat,
+          conic-gradient(#0000 30%,#ffffff);
+   -webkit-mask: radial-gradient(farthest-side,#0000 calc(100% - 3.8px),#000 0);
+   animation: spinner-c7wet2 1s infinite linear;
+}
+
+@keyframes spinner-c7wet2 {
+  100% {
+     transform: rotate(1turn);
+  }
+}
+
+
+.blacksmallspinner {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: radial-gradient(farthest-side,#000000 94%,#0000) top/3.8px 3.8px no-repeat,
+         conic-gradient(#0000 30%,#000000);
+  -webkit-mask: radial-gradient(farthest-side,#0000 calc(100% - 3.8px),#000 0);
+  animation: spinner-c7wet2 1s infinite linear;
+}
+
+@keyframes spinner-c7wet2 {
+  100% {
+     transform: rotate(1turn);
+  }
 }
 /* hover on selected range start and end month */
 .react-datepicker

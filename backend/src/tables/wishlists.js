@@ -2,7 +2,7 @@ const client = require('../Database/db');
 
 const CreateWishListsTable = async ()=>{
     try {
-        const createTableQuery = "CREATE TABLE IF NOT EXISTS wishlists (id SERIAL PRIMARY KEY, productid TEXT NOT NULL, userid BIGINT NOT NULL, FOREIGN KEY (userid) REFERENCES users(id))"
+        const createTableQuery = "CREATE TABLE IF NOT EXISTS wishlists (id SERIAL PRIMARY KEY, productid TEXT NOT NULL, userid BIGINT NOT NULL)"
 
         await client.query(createTableQuery).then(()=>{
             console.log('wishes');

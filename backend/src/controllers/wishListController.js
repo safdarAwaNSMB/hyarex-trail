@@ -1,18 +1,21 @@
 const { default: axios } = require('axios');
 const client = require('../Database/db');
+require('dotenv').config()
 
 const toggleToList = async (req, res) => {
     try {
         console.log(req.body);
-        const productEsixt = await client.query(`SELECT * FROM wishlists WHERE userId = '${req.body.userid}' AND productId = '${req.body.productid}'`);
-        if (productEsixt.rows?.length === 0) {
-            await client.query(`INSERT INTO wishlists (userid, productid) VALUES ('${req.body.userid}', '${req.body.productid}') RETURNING *`).then((results) => {
+        const productExist = await client.query(`SELECT * FROM wishlists WHERE userid = '${req.body.userid}' AND productid = '${req.body.productid}'`);
+        if (productExist.rows?.length === 0) {
+           await client.query(`INSERT INTO wishlists (userid, productid) VALUES ('${req.body.userid}', '${req.body.productid}') RETURNING *`).then((results) => {
                 console.log('added');
+                console.log(results.rows);
                 res.status(200).json({ added: true, message: 'Added To Wishlist!', data: results.rows[0] })
             }).catch(err => {
                 console.log(err);
                 res.status(400).json({ message: 'sorry' })
             })
+            
         } else {
             await client.query(`DELETE FROM wishlists WHERE userid = '${req.body.userid}' AND productid = '${req.body.productid}'`).then((results) => {
                 console.log('removed');
@@ -28,8 +31,8 @@ const toggleToList = async (req, res) => {
 }
 const checkFavorite = async (req, res) => {
     try {
-        const productEsixt = await client.query(`SELECT * FROM wishlists WHERE userid = '${req.body.userid}' AND productid = '${req.body.productid}'`);
-        if (productEsixt.rows?.length > 0) {
+        const productExist = await client.query(`SELECT * FROM wishlists WHERE userid = '${req.body.userid}' AND productid = '${req.body.productid}'`);
+        if (productExist.rows?.length > 0) {
             console.log(true);
             res.status(200).json({ favorite: true, message: 'Product is favorite!' })
         } else {
@@ -41,7 +44,7 @@ const checkFavorite = async (req, res) => {
 }
 const removeFavorite = async (req, res) => {
     try {
-        const productEsixt = await client.query(`DELETE FROM wishlists WHERE userid = '${req.body.userid}' AND productid = '${req.body.productid}'`);
+        const productExist = await client.query(`DELETE FROM wishlists WHERE userid = '${req.body.userid}' AND productid = '${req.body.productid}'`);
 
         res.status(200).json({ message: 'Removed from favorite!' })
 
@@ -52,23 +55,18 @@ const removeFavorite = async (req, res) => {
 }
 const getFavorites = async (req, res) => {
     try {
-        const productExistt = await client.query(`SELECT * FROM wishlists WHERE userId = '${req.params.userid}'`);
-        if (productExistt.rows?.length > 0) {
-            const productsPromises = productExistt.rows.map(async (obj) => {
+        const productExist = await client.query(`SELECT * FROM wishlists WHERE userId = '${req.params.userid}'`);
+        if (productExist.rows?.length > 0) {
+            console.log(productExist.rows);
+            const productsPromises = productExist.rows.map(async (obj) => {
+                console.log(obj.productid);
                 const options = {
                     method: 'GET',
-                    url: 'https://alibaba-1688-data-service.p.rapidapi.com/item/itemFullInfo',
-                    params: {
-                        itemId: obj.productid
-                    },
-                    headers: {
-                        'X-RapidAPI-Key': '1013c5ec66msh372a762a07eeb8fp1803b5jsna65e28c27f18',
-                        'X-RapidAPI-Host': 'alibaba-1688-data-service.p.rapidapi.com'
-                    }
+                    url: `https://www.lovbuy.com/1688api/getproductinfo2.php?key=2c040d02c288e446a1d1709c90bb781a&item_id=${obj.productid}&lang=en`,
                 };
-
-                const response = await axios.request(options);
-                return response.data;
+                const response = await axios.request(options).catch(err => console.log(err));
+                console.log(response.data);
+                return response?.data?.result?.result;
             });
             const products = await Promise.all(productsPromises);
             console.log(products);
@@ -77,6 +75,7 @@ const getFavorites = async (req, res) => {
             res.status(200).json({ wishlistProducts: [] })
         }
     } catch (error) {
+        console.log(error);
         res.status(400).json({ message: 'Sorry' })
     }
 }

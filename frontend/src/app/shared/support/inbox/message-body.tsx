@@ -7,7 +7,7 @@ import { useAtomValue } from 'jotai';
 import { FiExternalLink } from 'react-icons/fi';
 import { HiOutlineClipboardDocument } from 'react-icons/hi2';
 import { PiEye, PiDownloadSimpleBold, PiCheck } from 'react-icons/pi';
-import { Avatar, Title, Text, Tooltip } from 'rizzui';
+import { Avatar, Title, Text, Tooltip, Badge } from 'rizzui';
 import { getRelativeTime } from '@/utils/get-relative-time';
 import {
   dataAtom,
@@ -16,6 +16,9 @@ import {
 import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard';
 import { DotSeparator } from '@/app/shared/support/inbox/message-details';
 import pdfIcon from '@public/pdf-icon.svg';
+import dayjs from 'dayjs';
+import { useSession } from 'next-auth/react';
+import { adminSeeAgents } from '@/store/atoms';
 
 const p1 = `asperiores nesciunt autem quod error hic laudantium iste perspiciatis officiis voluptatibus exercitationem facere atque sapiente fuga excepturi qui illum alias reiciendis exercitationem ad occaecati deserunt molestiae maxime ratione consequuntur mollitia quae tempore alias ea architecto dolore iusto eaque error odit`;
 const p2 = `maxime suscipit fuga ducimus perspiciatis nemo porro nihil eaque a ab molestias praesentium voluptatum dignissimos odit ea omnis dolores maxime aspernatur vitae incidunt corrupti laudantium deserunt nisi facere sapiente fugiat`;
@@ -25,50 +28,80 @@ const p5 = `quia ullam aut occaecati atque eos dolores numquam dignissimos volup
 const p6 = `excepturi corrupti iure dolores quam inventore veritatis culpa modi saepe alias esse aperiam ipsam assumenda ex ex dolor pariatur debitis accusantium architecto omnis quae officia`;
 const p7 = `maiores nostrum omnis dolor debitis minima omnis corporis incidunt aperiam vel tenetur enim perspiciatis incidunt ex laborum ex facilis similique nam facilis nostrum magni voluptatum molestiae voluptate dignissimos saepe ratione consequatur at sequi quidem est quibusdam ducimus facere laborum sunt sapiente ex repudiandae eius rem similique cumque doloremque eius omnis pariatur laboriosam modi nihil odit voluptatum tempora ratione magnam quo inventore vitae numquam`;
 
-export default function MessageBody() {
+export default function MessageBody(message: any) {
   const data = useAtomValue(dataAtom);
   const messageId = useAtomValue(messageIdAtom);
   const [isCopied, setIsCopied] = useState(false);
   const [state, copyToClipboard] = useCopyToClipboard();
+  const messageToShow = message?.message;
+  const session: any = useSession();
+  const currentUser = session?.data?.userData;
+  const adminForAgents = useAtomValue(adminSeeAgents)
+  // const message = data.find((m) => m.id === messageId);
 
-  const message = data.find((m) => m.id === messageId);
-  const initials = `${message?.firstName.charAt(0)}${message?.lastName.charAt(
-    0
-  )}`;
-
-  const handleCopyToClipboard = () => {
-    copyToClipboard(message?.id as string);
-    if (!state.error && state.value) {
-      setIsCopied(() => true);
-      setTimeout(() => {
-        setIsCopied(false);
-      }, 3000); // 3 seconds
-    }
-  };
+  // const handleCopyToClipboard = () => {
+  //   copyToClipboard(message?.id as string);
+  //   if (!state.error && state.value) {
+  //     setIsCopied(() => true);
+  //     setTimeout(() => {
+  //       setIsCopied(false);
+  //     }, 3000); // 3 seconds
+  //   }
+  // };
 
   return (
     <div>
       <div className="grid grid-cols-[32px_1fr] items-start gap-3 lg:gap-4 xl:grid-cols-[48px_1fr]">
         <Avatar
-          name="John Doe"
-          src={message?.avatar}
-          initials={initials}
+          name={
+            (currentUser?.userrole !== 'agent' && !adminForAgents)
+              ? messageToShow?.sender?.firstname +
+                ' ' +
+                messageToShow?.sender?.lastname
+              : messageToShow?.from === 'admin'
+                ? messageToShow?.admin?.name
+                : messageToShow?.agent?.name
+          }
+          // src={message?.avatar}
           className="!h-8 !w-8 bg-[#70C5E0] font-medium text-white xl:!h-11 xl:!w-11"
         />
         <div className="-mt-1.5 lg:mt-0">
           <div className="flex items-center justify-between">
-            <Title as="h3" className="text-sm font-medium">
-              {message?.firstName} {message?.lastName}
+            <Title as="h3" className="text-sm mt-3 font-bold">
+              {(currentUser?.userrole !== 'agent' && !adminForAgents)
+                ? messageToShow?.sender?.firstname +
+                  ' ' +
+                  messageToShow?.sender?.lastname
+                : messageToShow?.from === 'admin'
+                  ? messageToShow?.admin?.name
+                  : messageToShow?.agent?.name}
+              {(messageToShow?.sender?.userrole === 'admin' ||
+                messageToShow?.from === 'admin') && (
+                <Badge
+                  className="ms-1"
+                  variant="outline"
+                  color="success"
+                  size="sm"
+                >
+                  Admin
+                </Badge>
+              )}
             </Title>
-          </div>
-          <div className="mt-1.5 items-center gap-2 text-xs text-gray-500 lg:flex">
-            <span className="flex items-center lowercase">
-              {message?.email} <FiExternalLink className="ml-1 h-2.5 w-2.5" />
+            <span className="me-3">
+              {dayjs(messageToShow?.timestamp).format('DD-MM-YYYY |  h : m A')}
             </span>
-            <DotSeparator className="hidden lg:block" />
+          </div>
+          <div className=" items-center gap-2 text-xs text-gray-500 lg:flex">
+            <span className="flex items-center lowercase">
+              {currentUser?.userrole !== 'agent'
+                ? messageToShow?.sender?.email
+                : messageToShow?.from === 'admin'
+                  ? messageToShow?.admin?.email
+                  : messageToShow?.agent?.email}
+            </span>
+            {/* <DotSeparator className="hidden lg:block" /> */}
             <span className="mt-1.5 flex items-center lg:mt-0">
-              #{message?.id}{' '}
-              <Tooltip
+              {/* <Tooltip
                 size="sm"
                 rounded="sm"
                 placement="top"
@@ -81,29 +114,24 @@ export default function MessageBody() {
                     <HiOutlineClipboardDocument className="ml-1 h-3 w-3" />
                   )}
                 </button>
-              </Tooltip>
+              </Tooltip> */}
             </span>
-            <DotSeparator className="hidden lg:block" />
-            <span>Open {getRelativeTime(message?.date as Date)}</span>
+            {/* <DotSeparator className="hidden lg:block" /> */}
+            {/* <span>Open {getRelativeTime(message?.timestamp as Date)}</span> */}
           </div>
         </div>
       </div>
 
       <div className="ml-10 mt-3 grid gap-2 leading-relaxed xl:ml-16 2xl:mt-4">
-        <Text>{p1}</Text>
-        <Text>{p2}</Text>
+        <Text>{messageToShow?.message || messageToShow?.content}</Text>
+        {/* <Text>{p2}</Text>
         <Text>{p3}</Text>
         <Text>{p4}</Text>
         <Text>{p5}</Text>
         <Text>{p6}</Text>
-        <Text>{p7}</Text>
-        <Text>
-          Regards, <br />
-          {message?.firstName} {message?.lastName}, <br />
-          {message?.company}
-        </Text>
+        <Text>{p7}</Text> */}
 
-        {!isEmpty(message?.attachments) && (
+        {/* {!isEmpty(message?.attachments) && (
           <div className="mt-2 grid gap-2 md:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-3">
             {message?.attachments.map((attachments) => (
               <div
@@ -147,7 +175,7 @@ export default function MessageBody() {
               </div>
             ))}
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

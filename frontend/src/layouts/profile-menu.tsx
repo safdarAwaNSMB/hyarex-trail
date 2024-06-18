@@ -5,7 +5,7 @@ import cn from '@/utils/class-names';
 import { routes } from '@/config/routes';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 
@@ -19,7 +19,8 @@ export default function ProfileMenu({
   avatarClassName?: string;
   username?: boolean;
 }) {
-  const session : any = useSession();
+  const session: any = useSession();
+ 
   return (
     <ProfileMenuPopover>
       <Popover.Trigger>
@@ -30,8 +31,8 @@ export default function ProfileMenu({
           )}
         >
           <Avatar
-            src={session?.data?.userData?.avator || ''}
-            name={session?.data?.userData?.firstname + '' + session?.data?.userData?.lastname}
+            src={session?.data?.userData?.avator || session?.data?.userData?.image}
+            name={session?.data?.userData?.firstname ? (session?.data?.userData?.firstname + '' + session?.data?.userData?.lastname) : session?.data?.userData?.name}
             className={cn('!h-9 w-9 sm:!h-10 sm:!w-10', avatarClassName)}
           />
           {!!username && (
@@ -56,7 +57,7 @@ function ProfileMenuPopover({ children }: React.PropsWithChildren<{}>) {
   useEffect(() => {
     setIsOpen(false);
   }, [pathname]);
-
+ 
   return (
     <Popover
       isOpen={isOpen}
@@ -81,19 +82,22 @@ const menuItems = [
 ];
 
 function DropdownMenu() {
-  const session : any = useSession();
+  const session: any = useSession();
+  const router = useRouter()
   return (
     <div className="w-64 text-left rtl:text-right">
       <div className="flex items-center border-b border-gray-300 px-6 pb-5 pt-6">
         <Avatar
-          src={session?.data?.userData?.avator || ''}
-          name={(session.data.userData?.firstname + ' ' + session?.data?.userData?.lastname) || "Your Name"}
+          src={session?.data?.userData?.avator || session?.data?.userData?.image}
+          name={session?.data?.userData?.firstname ? (session?.data?.userData?.firstname + '' + session?.data?.userData?.lastname) : session?.data?.userData?.name}
         />
         <div className="ms-3">
           <Title as="h6" className="font-semibold">
-          {(session.data.userData?.firstname + ' ' + session?.data?.userData?.lastname) || "Hy,"}
+            {session?.data?.userData?.firtsname ? (session?.data?.userData?.firstname + '' + session?.data?.userData?.lastname) : (session?.data?.user?.name)}
           </Title>
-          <Text  className="text-gray-600 break-words w-5/6">{session.data.userData?.email|| "yourmail@example.com"}</Text>
+          {session?.data?.userData?.email && (
+            <Text className="text-gray-600 break-words w-5/6">{session?.data?.userData ? (session.data.userData?.email || "yourmail@example.com") : session?.data?.user?.email}</Text>
+          )}
         </div>
       </div>
       <div className="grid px-3.5 py-3.5 font-medium text-gray-700">
@@ -111,7 +115,12 @@ function DropdownMenu() {
         <Button
           className="h-auto w-full justify-start p-0 font-medium text-gray-700 outline-none focus-within:text-gray-600 hover:text-gray-900 focus-visible:ring-0"
           variant="text"
-          onClick={() => signOut()}
+          onClick={async () => 
+            {
+            router.push("/auth/sign-in-1")
+            await signOut({ callbackUrl: "/auth/sign-in-1"})
+            }
+          }
         >
           Sign Out
         </Button>

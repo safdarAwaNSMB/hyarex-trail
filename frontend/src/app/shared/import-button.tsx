@@ -5,6 +5,7 @@ import { Button } from 'rizzui';
 import cn from '@/utils/class-names';
 import { PiArrowLineDownBold } from 'react-icons/pi';
 import { useModal } from '@/app/shared/modal-views/use-modal';
+import PopUpForm from './pop-up-form';
 const FileUpload = dynamic(() => import('@/app/shared/file-upload'), {
   ssr: false,
 });
@@ -18,9 +19,9 @@ type ImportButtonProps = {
 
 export default function ImportButton({
   title,
-  modalBtnLabel = 'Import File',
+  modalBtnLabel = 'Add User',
   className,
-  buttonLabel = 'Import',
+  buttonLabel = 'Add User',
 }: React.PropsWithChildren<ImportButtonProps>) {
   const { openModal } = useModal();
 
@@ -29,10 +30,8 @@ export default function ImportButton({
       onClick={() =>
         openModal({
           view: (
-            <FileUpload
+            <PopUpForm
               label={title}
-              accept="csv"
-              multiple={false}
               btnLabel={modalBtnLabel}
             />
           ),
@@ -41,7 +40,7 @@ export default function ImportButton({
       }
       className={cn('w-full @lg:w-auto', className)}
     >
-      <PiArrowLineDownBold className="me-1.5 h-[17px] w-[17px]" />
+      {/* <PiArrowLineDownBold className="me-1.5 h-[17px] w-[17px]" /> */}
       {buttonLabel}
     </Button>
   );

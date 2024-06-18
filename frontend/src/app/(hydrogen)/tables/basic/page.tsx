@@ -1,5 +1,7 @@
+'use client';
+
 import { routes } from '@/config/routes';
-import { orderData } from '@/data/order-data';
+import { getAllUsers, orderData } from '@/data/order-data';
 import { invoiceData } from '@/data/invoice-data';
 import { productsData } from '@/data/products-data';
 import { getColumns } from '@/app/shared/invoice/invoice-list/columns';
@@ -7,48 +9,51 @@ import { getColumns as getOrderColumns } from '@/app/shared/ecommerce/order/orde
 import { getColumns as getProductColumns } from '@/app/shared/ecommerce/product/product-list/columns';
 import BasicTableWidget from '@/components/controlled-table/basic-table-widget';
 import TableLayout from '@/app/(hydrogen)/tables/table-layout';
-import { metaObject } from '@/config/site.config';
+// import { metaObject } from '@/config/site.config';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 
-export const metadata = {
-  ...metaObject('Basic Table'),
-};
+// export const metadata = {
+//   ...metaObject('Basic Table'),
+// };
 
 const pageHeader = {
-  title: 'Basic Table',
+  title: 'Users List',
   breadcrumb: [
-    {
-      href: routes.eCommerce.dashboard,
-      name: 'Home',
-    },
-    {
-      name: 'Tables',
-    },
-    {
-      name: 'Basic',
-    },
   ],
 };
 
 export default function BasicTablePage() {
+  const [allUsers, setAllUsers] = useState<any>();
+  const getUsersList = async () => {
+    const data = await getAllUsers();
+    setAllUsers(data.user)
+  }
+  useEffect(() => {
+    getUsersList();
+  }, [])
+  console.log(allUsers);
+  
+
   return (
     <TableLayout
       title={pageHeader.title}
       breadcrumb={pageHeader.breadcrumb}
-      data={orderData}
+      data={allUsers}
       fileName="order_data"
       header="Order ID,Name,Email,Avatar,Items,Price,Status,Created At,Updated At"
     >
       <div className="grid grid-cols-1 gap-6 3xl:gap-8">
         <BasicTableWidget
           variant="classic"
-          title="Classic Table"
-          data={orderData}
+          title="Current Users"
+          data={allUsers}
           // @ts-ignore
           getColumns={getOrderColumns}
           enableSearch={false}
         />
 
-        <BasicTableWidget
+        {/* <BasicTableWidget
           title="Modern Table"
           variant="modern"
           data={productsData}
@@ -85,7 +90,7 @@ export default function BasicTablePage() {
           getColumns={getOrderColumns}
           enableSearch={false}
           className="[&_.rc-table-content_table_tbody_tr:last-child_td]:border-0"
-        />
+        /> */}
       </div>
     </TableLayout>
   );

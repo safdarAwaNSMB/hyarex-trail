@@ -5,10 +5,13 @@ import logoImg from '@public/logo-primary.svg';
 import logoImgText from '@public/logo-primary-text.svg';
 import Image from 'next/image';
 import { Button, Title, Text } from 'rizzui';
-import { PiAppleLogoFill, PiArrowLeftBold } from 'react-icons/pi';
+import { PiAppleLogoFill, PiArrowLeftBold, PiFacebookLogo, PiFacebookLogoBold, PiFacebookLogoFill } from 'react-icons/pi';
 import { FcGoogle } from 'react-icons/fc';
 import OrSeparation from '@/app/shared/auth-layout/or-separation';
 import toast from 'react-hot-toast';
+import { signIn } from 'next-auth/react';
+import { SiFacebook } from "react-icons/si";
+
 
 export default function AuthWrapperOne({
   children,
@@ -88,19 +91,19 @@ export default function AuthWrapperOne({
                   <Button
                     onClick={() =>
                       // it should be signIn('apple')
-                      handleSignIn()
+                      signIn('facebook')
                     }
                     variant="outline"
                     className="h-11 w-full"
                   >
-                    <PiAppleLogoFill className="me-2 h-4 w-4 shrink-0" />
-                    <span className="truncate">Signin With Apple</span>
+                    <SiFacebook  className="me-2 h-4 w-4 shrink-0" />
+                    <span className="truncate">Signin With Facebook</span>
                   </Button>
                   <Button
                     variant="outline"
                     onClick={() =>
                       // it should be signIn('google')
-                      handleSignIn()
+                      signIn('google')
                     }
                     className="h-11 w-full"
                   >

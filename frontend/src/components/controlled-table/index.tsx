@@ -54,14 +54,14 @@ export default function ControlledTable({
 
   return (
     <>
-      {!isEmpty(filterOptions) && (
+      {/* {!isEmpty(filterOptions) && (
         <TableFilter {...filterOptions}>{filterElement}</TableFilter>
-      )}
+      )} */}
 
       <div className="relative">
         <Table
           scroll={{ x: 1300 }}
-          rowKey={(record) => record.id}
+          rowKey={(record) => record?.id}
           className={cn(className)}
           {...tableProps}
         />
@@ -69,12 +69,12 @@ export default function ControlledTable({
         {tableFooter ? tableFooter : null}
       </div>
 
-      {!isEmpty(paginatorOptions) && (
+      {/* {!isEmpty(paginatorOptions) && (
         <TablePagination
           paginatorClassName={paginatorClassName}
           {...paginatorOptions}
         />
-      )}
+      )} */}
     </>
   );
 }

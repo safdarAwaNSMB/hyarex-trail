@@ -4,7 +4,9 @@ import {
   genderData,
   initialState,
 } from '@/app/shared/ecommerce/shop/shop-filters/filter-utils';
+import { useAtom } from 'jotai';
 import { Radio, Title } from 'rizzui';
+import { searchedText } from '@/store/atoms';
 
 export default function GenderSpecificFilter({
   state,
@@ -13,6 +15,9 @@ export default function GenderSpecificFilter({
   state: typeof initialState;
   applyFilter: (query: string, value: any) => void;
 }) {
+  const [filtersText, setFiltersText] = useAtom(searchedText)
+
+  
   return (
     <div>
       <Title as="h6" className="font-semibold">

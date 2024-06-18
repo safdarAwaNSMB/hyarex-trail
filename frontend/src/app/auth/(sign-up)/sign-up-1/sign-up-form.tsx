@@ -19,6 +19,7 @@ export default function SignUpForm() {
   const router = useRouter();
   const pendingUser: string | undefined = Cookies.get('pendingUser');
   const parsedUser: any = pendingUser ? JSON.parse(pendingUser) : null;
+  const [loading, setLoading] = useState(false)
 
   const initialValues = {
     firstname: parsedUser?.firstname || '',
@@ -42,33 +43,32 @@ export default function SignUpForm() {
 
     return result;
   }
-  console.log(parsedUser);
-  console.log(pendingUser);
-
   const onSubmit: SubmitHandler<SignUpSchema> = async (data) => {
-    console.log(data);
-    if (data.password === data.confirmpassword) {
-
-      const userExist = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user-existence`, data).catch(err => {
-        toast.error('Server Error');
-      })
-      if (userExist?.status === 201) {
-        toast.error(userExist?.data.message);
-        return
-      } else if (userExist?.status === 200) {
-        const verificationcode = generateVerificationCode();
-        await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/send-verification-Email`, { ...data, verificationcode }).then((res) => {
-          console.log(res.data.data);
-          Cookies.set('pendingUser', JSON.stringify(res.data.data), { expires: 1 });
-          toast.success('Verification Email sent!');
-          router.push('/auth/otp-4')
-        }).catch(err => {
-          toast.error('Error in sending mail, Try Again!')
+    if (!loading) {
+      if (data.password === data.confirmpassword) {
+        setLoading(true)
+        const userExist = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user-existence`, data).catch(err => {
+          setLoading(false)
+          toast.error('Server Error');
         })
-      }
-    } else {
-      toast.error('Confirm Password not matched!')
-    };
+        if (userExist?.status === 200) {
+          setLoading(false)
+          toast.error(userExist?.data.message);
+          return
+        } else if (userExist?.status === 201) {
+          const verificationcode = generateVerificationCode();
+          await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/send-verification-Email`, { ...data, verificationcode }).then((res) => {
+            Cookies.set('pendingUser', JSON.stringify(res.data.data), { expires: 1 });
+            toast.success('Verification Email sent!');
+            router.push('/auth/otp-4')
+          }).catch(err => {
+            toast.error('Error in sending mail, Try Again!')
+          }).finally(() => setLoading(false))
+        }
+      } else {
+        toast.error('Confirm Password not matched!')
+      };
+    }
   }
 
   // setReset({ ...initialValues, isAgreed: false });
@@ -151,16 +151,22 @@ export default function SignUpForm() {
               </>
             </div>
             <Button size="lg" type="submit" className="col-span-2 mt-2">
-              <span>Get Started</span>{' '}
-              <PiArrowRightBold className="ms-2 mt-0.5 h-5 w-5" />
+              {loading ? (
+                <div className="smallspinner"></div>
+              ) : (
+                <>
+                  <span>Get Started</span>{' '}
+                  <PiArrowRightBold className="ms-2 mt-0.5 h-5 w-5" />
+                </>
+              )}
             </Button>
           </div>
         )}
       </Form>
       <Text className="mt-6 text-center leading-loose text-gray-500 lg:mt-8 lg:text-start">
-        Don’t have an account?{' '}
+        Already have an account?{' '}
         <Link
-          href={routes.auth.signIn1}
+          href={'/'}
           className="font-semibold text-gray-700 transition-colors hover:text-blue"
         >
           Sign In

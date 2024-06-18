@@ -5,54 +5,102 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { SubmitHandler } from 'react-hook-form';
 import { routes } from '@/config/routes';
-import { Input, Button, Text } from 'rizzui';
+import { Input, Button, Text, Password, PinCode } from 'rizzui';
 import { Form } from '@/components/ui/form';
 import { useMedia } from '@/hooks/use-media';
 import {
   forgetPasswordSchema,
   ForgetPasswordSchema,
 } from '@/utils/validators/forget-password.schema';
+import { ResetPasswordSchema, resetPasswordSchema } from '@/utils/validators/reset-password.schema';
+import Cookies from 'js-cookie';
+import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 const initialValues = {
-  email: '',
+  verificationCode: '',
+  password: "",
+  confirmpassword: ""
 };
 
 export default function ForgetPasswordForm() {
   const isMedium = useMedia('(max-width: 1200px)', false);
   const [reset, setReset] = useState({});
-  const onSubmit: SubmitHandler<ForgetPasswordSchema> = (data) => {
-    console.log('forgot password form', data);
-    toast.success(
-      <Text>
-        Reset link sent to this email:{' '}
-        <Text as="b" className="font-semibold">
-          {data.email}
-        </Text>
-      </Text>
-    );
-    setReset(initialValues);
+  const [loading, setLoading] = useState(false)
+  const [otpError, setOtpError] = useState(false);
+  const userToReset: string | undefined = Cookies.get('userToReset');
+  const parsedUserToReset: any = userToReset ? JSON.parse(userToReset) : null;
+  const router = useRouter()
+  const onSubmit: SubmitHandler<any> = async (data) => {
+    console.log(data);
+    if(!loading){
+      
+      if (data.verificationCode?.length !== 5) {
+        setOtpError(true);
+      } else {
+        if (data.verificationCode === parsedUserToReset?.verificationcode) {
+          setLoading(true)
+          await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/reset-password`, parsedUserToReset).then(res => {
+            toast.success(
+              <Text>
+                Password Cahnges Successfully,
+                Sign In with New Password!
+              </Text>
+            );
+            Cookies.remove('userToReset');
+            router.push('/')
+            // setShowPlans(true)
+            // signIn('credentials', {
+            //   ...parsedUser,
+            //   callbackUrl : '/'
+            // })
+          }).finally(() => setLoading(false))
+        } else {
+          setOtpError(true);
+          toast.error('Invalid OTP!')
+        }
+      }
+    }
   };
 
   return (
     <>
-      <Form<ForgetPasswordSchema>
-        validationSchema={forgetPasswordSchema}
+      <Form<ResetPasswordSchema>
+        validationSchema={resetPasswordSchema}
         resetValues={reset}
         onSubmit={onSubmit}
         useFormProps={{
           defaultValues: initialValues,
         }}
       >
-        {({ register, formState: { errors } }) => (
+        {({ register, setValue, formState: { errors } }) => (
           <div className="space-y-5 lg:space-y-6">
-            <Input
-              type="email"
+            <Text>We have sent a verification Code to your E-mail, please confirm it to reset Password!.</Text>
+            <PinCode
               size={isMedium ? 'lg' : 'xl'}
-              label="Email"
-              placeholder="Enter your email"
+              // label="Email"
+              // className="[&>label>span]:font-medium"
+              setValue={(value) => setValue('verificationCode', String(value))}
+              length={5}
+              error={errors.verificationCode?.message || otpError ? 'Invalid OTP' : ''}
+            />
+            <Password
+              label="New Password"
+              placeholder="Enter  password"
+              size="lg"
+              variant='flat'
               className="[&>label>span]:font-medium"
-              {...register('email')}
-              error={errors.email?.message}
+              {...register('password')}
+              error={errors.password?.message}
+            />
+            <Password
+              label="Confirm Password"
+              placeholder="Confirm Password"
+              size="lg"
+              variant='flat'
+              className="[&>label>span]:font-medium"
+              {...register('confirmpassword')}
+              error={errors.confirmpassword?.message}
             />
             <div className="block">
               <Button
@@ -60,7 +108,7 @@ export default function ForgetPasswordForm() {
                 type="submit"
                 size={isMedium ? 'lg' : 'xl'}
               >
-                Reset Password
+                {loading ? <div className='smallspinner'></div> : "Reset Password"}
               </Button>
             </div>
           </div>

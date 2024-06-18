@@ -50,7 +50,7 @@ export default function SearchWidget({
         containerClassName="dark:bg-gray-100/90 overflow-hidden dark:backdrop-blur-xl"
         className="z-[9999]"
       >
-        <SearchList onClose={() => setOpen(false)} />
+        <SearchList  setOpen={setOpen} />
       </Modal>
     </>
   );

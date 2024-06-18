@@ -9,69 +9,100 @@ import hasSearchedParams from '@/utils/has-searched-params';
 import shuffle from 'lodash/shuffle';
 import axios from 'axios';
 import { set } from 'lodash';
+import { useAtom, useAtomValue } from 'jotai';
+import { filtersData, imageUrl, loadingProducts, pageNumber, products, searchedText } from '@/store/atoms';
 
-function generateRandomCharacter(): string | number {
-  // Random number between 0 and 61 representing characters from 0-9, a-z, and A-Z
-  const randomIndex = Math.floor(Math.random() * 62);
+function generateRandomCharacter(): string {
+  // Random number between 0 and 51 representing characters from a-z and A-Z
+  const randomIndex = Math.floor(Math.random() * 52);
 
-  // Determine if an alphabet or number should be generated
-  const isNumber = randomIndex < 10; // 0-9 have indices 0-9
+  // Determine if uppercase or lowercase
+  const isUppercase = randomIndex < 26; // Lowercase: 0-25, Uppercase: 26-51
 
-  if (isNumber) {
-    return String.fromCharCode(randomIndex + 48); // Convert number to single character
-  } else {
-    // Shift indices for alphabets:
-    // - Lowercase: start at 10 (index 10-35)
-    // - Uppercase: start at 36 (index 36-61)
-    const shiftedIndex = isNumber ? randomIndex - 10 : randomIndex - 36;
-    const charCode = isNumber ? shiftedIndex + 48 : shiftedIndex + 65; // Convert to ASCII code
-    return String.fromCharCode(charCode); // Convert ASCII code to single character
-  }
+  const charCode = isUppercase ? randomIndex + 65 : randomIndex + 97; // Convert to ASCII code
+
+  return String.fromCharCode(charCode); // Convert ASCII code to single character
 }
 
 export default function ProductFeed() {
-  const [isLoading, setLoading] = useState(false);
-  const [productsToShow, setProductsToShow] = useState<any[]>([])
-  const [reqRes, setReqRes] = useState(null)
-  const [currentPage, setCurrentPage] = useState(0);
+  const [isLoading, setLoading] = useAtom(loadingProducts);
+  const [productsToShow, setProductsToShow] = useAtom(products)
+  const [currentPage, setCurrentPage] = useAtom(pageNumber);
   const [moreLoading, setMoreLoading] = useState(false)
-  const [searchCharacter, setSearchCharacter] = useState<string | number>(generateRandomCharacter())
-
-  
-
+  const [searchCharacter, setSearchCharacter] = useAtom(searchedText);
+  const filterValues = useAtomValue(filtersData);
+  const imageLink = useAtomValue(imageUrl)
   const options = {
     method: 'GET',
-    url: 'https://alibaba-1688-data-service.p.rapidapi.com/search/searchItems',
-    params: {
-      query: searchCharacter,
-      inStock: 'true',
-      page : currentPage + 1
-    },
-    headers: {
-      'X-RapidAPI-Key': '1013c5ec66msh372a762a07eeb8fp1803b5jsna65e28c27f18',
-      'X-RapidAPI-Host': 'alibaba-1688-data-service.p.rapidapi.com'
-    }
+    url: `https://www.lovbuy.com/1688api/searchproduct.php?key=${process.env.NEXT_PUBLIC_API_KEY}&lang=en&page=${currentPage + 1}&start_price=${filterValues.minPrice}&end_price=${filterValues?.maxPrice}&key_word=${filterValues.gender ? (filterValues.gender + " " + searchCharacter + " " + filterValues.category && filterValues.category) : filterValues.category ? filterValues.category + " " + searchCharacter : searchCharacter}`,
   };
+  // const optionsForImageSearch = {
+  //   method: 'GET',
+  //   url: 'https://alibaba-1688-data-service.p.rapidapi.com/search/searchByImage',
+  //   params: {
+  //     imageUrl: imageLink,
+  //     page: currentPage + 1
+  //   },
+  //   headers: {
+  //     'X-RapidAPI-Key': '1013c5ec66msh372a762a07eeb8fp1803b5jsna65e28c27f18',
+  //     'X-RapidAPI-Host': 'alibaba-1688-data-service.p.rapidapi.com'
+  //   }
+  // };
 
-  const getProducts = async ()=>{
+
+  const getProducts = async () => {
     try {
-      const response = await axios.request(options);
-      console.log(response.data);
-      setReqRes(response.data)
-      
-      setProductsToShow([...productsToShow, ...response.data.items]);
-      setCurrentPage(response.data.page);
-      setMoreLoading(false)
+      console.log(searchCharacter);
+
+      const response = await axios.request(options).finally(() => setLoading(false));
+      console.log(response);
+      console.log(response?.data?.items?.item?.length);
+      if (Array.isArray(response?.data?.items?.item) && response?.data?.items?.item?.length === 0) {
+        getProductsByAgainCharacter(generateRandomCharacter());
+      } else if(Array.isArray(response?.data?.items?.item)) {
+        setProductsToShow([...productsToShow, ...response?.data?.items?.item]);
+        setCurrentPage(response.data.items.page);
+        setMoreLoading(false)
+        setLoading(false);
+      }
     } catch (error) {
       console.error(error);
     }
   }
-  useEffect(()=>{
-    if(productsToShow?.length < 10){
+  const getProductsByAgainCharacter = async (character: any) => {
+    try {
+      console.log(character);
+      setSearchCharacter(character);
+      const response = await axios.request({
+        method: 'GET',
+        url: `https://www.lovbuy.com/1688api/searchproduct.php?key=${process.env.NEXT_PUBLIC_API_KEY}&lang=en&page=${currentPage + 1}&start_price=${filterValues.minPrice}&end_price=${filterValues?.maxPrice}&key_word=${character}`,
+      }).finally(() => setLoading(false));
+      console.log(response);
+      console.log(response?.data?.items?.item?.length);
+
+      if (response?.data?.items?.item?.length === 0 || response?.data?.status === 510) {
+        setSearchCharacter(generateRandomCharacter());
+        getProductsByAgainCharacter(generateRandomCharacter());
+      } else {
+        setProductsToShow([...productsToShow, ...response?.data?.items?.item]);
+        setCurrentPage(response.data.items.page);
+        setMoreLoading(false)
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  useEffect(() => {
+    if (productsToShow?.length === 0) {
       setSearchCharacter(generateRandomCharacter());
       getProducts();
+      return
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productsToShow])
+
   // const getMoreProducts = async ()=>{
   //   try {
   //     const response = await axios.request(options);
@@ -84,9 +115,13 @@ export default function ProductFeed() {
   //     console.error(error);
   //   }
   // }
-  
-  useEffect(()=>{
-    getProducts();
+
+  useEffect(() => {
+    if (productsToShow?.length < 1) {
+      setSearchCharacter(generateRandomCharacter());
+      getProducts();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   function handleLoadMore() {
@@ -97,19 +132,30 @@ export default function ProductFeed() {
 
   return (
     <div className="@container">
-      <div className="grid grid-cols-1 gap-x-5 gap-y-6 @md:grid-cols-[repeat(auto-fill,minmax(250px,1fr))] @xl:gap-x-7 @xl:gap-y-9 @4xl:grid-cols-[repeat(auto-fill,minmax(300px,1fr))] @6xl:grid-cols-[repeat(auto-fill,minmax(364px,1fr))]">
-        {productsToShow?.map((product : any, index : number) => (
-            <ProductModernCard key={product.id} product={product} />
-          ))}
-      </div>
-
-      
-        <div className="mb-4 mt-5 flex flex-col items-center xs:pt-6 sm:pt-8">
-          <Button isLoading={moreLoading} onClick={() => handleLoadMore()}>
-            Load More
-          </Button>
+      {isLoading ? (
+        <div className='flex justify-center'>
+          <div className='spinner'></div>
         </div>
-     
+      ) : (
+        <>
+          {productsToShow?.length < 1 ? (
+            <p className=' text-center w-full mx-auto'>Sorry, Try Again!</p>
+          ) : (
+            <div className="grid grid-cols-1 gap-x-5 gap-y-6 @md:grid-cols-[repeat(auto-fill,minmax(250px,1fr))] @xl:gap-x-7 @xl:gap-y-9 @4xl:grid-cols-[repeat(auto-fill,minmax(289px,1fr))] @6xl:grid-cols-[repeat(auto-fill,minmax(289px,1fr))]">
+              {productsToShow?.map((product: any, index: number) => (
+                <ProductModernCard key={product.offerId} product={product} />
+              ))}
+            </div>
+          )}
+          <div className="mb-4 mt-5 flex flex-col items-center xs:pt-6 sm:pt-8">
+            <Button isLoading={moreLoading} onClick={() => handleLoadMore()}>
+              Load More
+            </Button>
+          </div>
+        </>
+      )}
+
+
     </div>
   );
 }

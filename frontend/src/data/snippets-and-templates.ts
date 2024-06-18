@@ -13,21 +13,13 @@ export type SnippetType = {
 
 export const folders = [
   {
-    label: 'Withdrawal',
-    value: 'withdrawal',
+    label: 'Chat on Ticket',
+    value: 'chat',
   },
   {
-    label: 'Invoice',
-    value: 'invoice',
-  },
-  {
-    label: 'Deposit',
-    value: 'deposit',
-  },
-  {
-    label: 'Payment',
-    value: 'payment',
-  },
+    label: 'Mail to us',
+    value: 'email',
+  }
 ];
 
 export type SnippetOrTemplate = {

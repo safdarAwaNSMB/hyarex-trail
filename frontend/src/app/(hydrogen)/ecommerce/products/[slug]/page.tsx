@@ -6,6 +6,8 @@ import ProductDetails from '@/app/shared/ecommerce/product/product-details';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import WishlistDrawer from '@/app/shared/ecommerce/cart/wishlist-drawer';
+import { productToShow } from '@/store/atoms';
+import { useAtom } from 'jotai';
 
 // export const metadata = {
 //   ...metaObject('Product Details'),
@@ -23,26 +25,21 @@ export default function ProductDetailsPage({ params }: any) {
 
     ],
   };
+  const [loadingData, setLoadingData] = useState(true)
 
   const options = {
     method: 'GET',
-    url: 'https://alibaba-1688-data-service.p.rapidapi.com/item/itemFullInfo',
-    params: {
-      itemId: params.slug
-    },
-    headers: {
-      'X-RapidAPI-Key': '1013c5ec66msh372a762a07eeb8fp1803b5jsna65e28c27f18',
-      'X-RapidAPI-Host': 'alibaba-1688-data-service.p.rapidapi.com'
-    }
+    url: `https://www.lovbuy.com/1688api/getproductinfo2.php?key=${process.env.NEXT_PUBLIC_API_KEY}&item_id=${params.slug}&lang=en`,
   };
 
-  const [product, setProduct] = useState<any>()
+  const [product, setProduct] = useAtom(productToShow)
 
   const getProductData = async () => {
     try {
       const response = await axios.request(options);
-      console.log(response.data);
-      setProduct(response.data)
+      console.log(response);
+      setProduct(response?.data?.result?.result);
+      setLoadingData(false)
     } catch (error) {
       console.error(error);
     }
@@ -50,6 +47,7 @@ export default function ProductDetailsPage({ params }: any) {
 
   useEffect(() => {
     getProductData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
 
@@ -57,7 +55,13 @@ export default function ProductDetailsPage({ params }: any) {
   return (
     <>
       <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb} />
-      <ProductDetails product={product} />
+      {loadingData ?
+        <div className='w-full flex justify-center'>
+          <div className='spinner'></div>
+        </div>
+        :
+        <ProductDetails />
+      }
       <WishlistDrawer />
     </>
   );

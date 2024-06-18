@@ -11,7 +11,7 @@ type ModalTypes = {
 const modalAtom = atom<ModalTypes>({
   isOpen: false,
   view: null,
-  customSize: '320px',
+  customSize: '420px',
 });
 
 export function useModal() {

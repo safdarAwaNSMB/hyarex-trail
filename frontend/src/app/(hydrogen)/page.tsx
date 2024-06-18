@@ -11,6 +11,7 @@ import ProductFeed from '../shared/ecommerce/shop/product-feed';
 import CartDrawer from '../shared/ecommerce/cart/cart-drawer';
 import { CartProvider } from '@/store/quick-cart/cart.context';
 import WishlistDrawer from '../shared/ecommerce/cart/wishlist-drawer';
+import ExecutiveDashboard from '../shared/executive';
 
 // export const metadata = {
 //   ...metaObject('Shop'),
@@ -39,26 +40,26 @@ export default function FileDashboardPage() {
   };
 
 
-  if (session?.data?.userData?.userrole === 'buyer') {
+  return (
+    <>
+      {session?.data?.userData?.userrole === 'admin' || session?.data?.userData?.userrole == 'agent' ? (
+        <>
+        <ExecutiveDashboard />
+        </>
+      ) : (
+        <>
+          <CartProvider>
+            <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
+              <FiltersButton placement="right" modalView={<ShopFilters />} />
+            </PageHeader>
+            <ProductFeed />
+            <CartDrawer />
+            <WishlistDrawer />
+          </CartProvider>
+        </>
+      )}
 
-    return (
-      <>
-        <CartProvider>
-          <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
-            <FiltersButton placement="right" modalView={<ShopFilters />} />
-          </PageHeader>
-          <ProductFeed />
-          <CartDrawer />
-          <WishlistDrawer />
-        </CartProvider>
-      </>
-    );
-  } else {
-    return (
-      <>
-        <h1>From Page main</h1>
-        <FileDashboard />
-      </>
-    );
-  }
+    </>
+  );
+
 }

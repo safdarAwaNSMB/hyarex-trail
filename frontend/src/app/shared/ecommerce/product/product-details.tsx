@@ -11,24 +11,27 @@ import { modernProductsGrid } from '@/data/shop-products';
 import { generateSlug } from '@/utils/generate-slug';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { useAtomValue } from 'jotai';
+import { productToShow } from '@/store/atoms';
 
-export default function ProductDetails(product: any) {
-  
+export default function ProductDetails() {
+
+  const product = useAtomValue(productToShow);
 
   return (
     <div className="@container">
       <div className="@3xl:grid @3xl:grid-cols-12">
         <div className="col-span-7 mb-7 @container @lg:mb-10 @3xl:pe-10">
-          <ProductDetailsGallery product={product?.product} />
+          <ProductDetailsGallery />
         </div>
         <div className="col-span-5 @container">
-          <ProductDetailsSummery product={product?.product} />
-          <ProductDeliveryOptions product={product?.product} />
-          {/* <ProductDetailsDescription product={product?.product} /> */}
-          <ProductDetailsReview product={product?.product} />
+          <ProductDetailsSummery />
+          {/* <ProductDeliveryOptions product={product?.product} /> */}
+          {/* <ProductDetailsReview product={product?.product} /> */}
         </div>
       </div>
-      <ProductDetailsRelatedProducts product={product?.product} />
+      <ProductDetailsDescription />
+      {/* <ProductDetailsRelatedProducts /> */}
     </div>
   );
 }

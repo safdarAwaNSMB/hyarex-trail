@@ -5,44 +5,31 @@ import ProductModernCard from '@/components/cards/product-modern-card';
 import { similarProducts } from '@/data/similar-products-data';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-function generateRandomCharacter(): string | number {
-  // Random number between 0 and 61 representing characters from 0-9, a-z, and A-Z
-  const randomIndex = Math.floor(Math.random() * 62);
+import { useAtom, useAtomValue } from 'jotai';
+import { filtersData, pageNumber, productToShow, searchedText} from '@/store/atoms';
 
-  // Determine if an alphabet or number should be generated
-  const isNumber = randomIndex < 10; // 0-9 have indices 0-9
-
-  if (isNumber) {
-    return String.fromCharCode(randomIndex + 48); // Convert number to single character
-  } else {
-    // Shift indices for alphabets:
-    // - Lowercase: start at 10 (index 10-35)
-    // - Uppercase: start at 36 (index 36-61)
-    const shiftedIndex = isNumber ? randomIndex - 10 : randomIndex - 36;
-    const charCode = isNumber ? shiftedIndex + 48 : shiftedIndex + 65; // Convert to ASCII code
-    return String.fromCharCode(charCode); // Convert ASCII code to single character
-  }
-}
-export default function ProductDetailsRelatedProducts(product : any) {
+export default function ProductDetailsRelatedProducts() {
 
   const [productsToShow, setProductsToShow] = useState<any[]>([])
   const [reqRes, setReqRes] = useState(null)
-  const [currentPage, setCurrentPage] = useState(0);
   const [moreLoading, setMoreLoading] = useState(false);
-  const [searchCharacter, setSearchCharacter] = useState<string | number>(generateRandomCharacter())
-
+  const [currentPage, setCurrentPage] = useAtom(pageNumber);
+  const [searchCharacter, setSearchCharacter] = useAtom(searchedText);
+  const product = useAtomValue(productToShow);
+  const filterValues = useAtomValue(filtersData);
+  const searched = useAtomValue(searchedText);
   const options = {
     method: 'GET',
-    url: 'https://alibaba-1688-data-service.p.rapidapi.com/search/searchItems',
-    params: {
-      query: searchCharacter,
-      inStock: 'true',
-      page : currentPage + 1
-    },
-    headers: {
-      'X-RapidAPI-Key': '1013c5ec66msh372a762a07eeb8fp1803b5jsna65e28c27f18',
-      'X-RapidAPI-Host': 'alibaba-1688-data-service.p.rapidapi.com'
-    }
+    url: `https://www.lovbuy.com/1688api/searchproduct.php?key=${process.env.NEXT_PUBLIC_API_KEY}&lang=en&page=${currentPage + 1}&start_price=${filterValues.minPrice}&end_price=${filterValues?.maxPrice}&&key_word=${filterValues.gender ? (filterValues.gender + " " + searchCharacter + " " + filterValues.category && filterValues.category) : filterValues.category ? filterValues.category + " " + searchCharacter : searchCharacter}&catalog_id=${product.categoryId}`,
+    // params: {
+    //   query: searchCharacter,
+    //   inStock: 'true',
+    //   page : currentPage + 1
+    // },
+    // headers: {
+    //   'X-RapidAPI-Key': '1013c5ec66msh372a762a07eeb8fp1803b5jsna65e28c27f18',
+    //   'X-RapidAPI-Host': 'alibaba-1688-data-service.p.rapidapi.com'
+    // }
   };
 
   const getProducts = async ()=>{
@@ -50,8 +37,8 @@ export default function ProductDetailsRelatedProducts(product : any) {
       const response = await axios.request(options);
       console.log(response.data);
       setReqRes(response.data)
-      setProductsToShow([...productsToShow, ...response.data.items]);
-      setCurrentPage(response.data.page);
+      setProductsToShow(response?.data?.items?.item);
+      // setCurrentPage(response.data.page);
       setMoreLoading(false)
     } catch (error) {
       console.error(error);
