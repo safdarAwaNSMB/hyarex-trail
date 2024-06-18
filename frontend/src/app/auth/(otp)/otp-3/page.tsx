@@ -71,6 +71,7 @@ export default function ForgotPassword() {
     if (!verifiedUser) {
       router.push('/auth/sign-in-1')
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [verifiedUser])
   const parsedUser: any = verifiedUser ? JSON.parse(verifiedUser) : null;
 

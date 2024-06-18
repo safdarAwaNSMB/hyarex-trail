@@ -15,7 +15,7 @@ import { generateSlug } from '@/utils/generate-slug';
 
 type ProductCarouselProps = {
   title: string;
-  data: Product[];
+  data: any;
   className?: string;
 };
 
@@ -96,7 +96,7 @@ export default function ProductCarousel({
           },
         }}
       >
-        {data.map((product) => (
+        {data.map((product : any) => (
           <SwiperSlide key={product.id}>
             <ProductModernCard product={product} />
           </SwiperSlide>

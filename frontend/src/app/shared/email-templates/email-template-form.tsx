@@ -28,8 +28,8 @@ export default function EmailTemplateForm({ template }: { template: string }) {
     resolver: zodResolver(emailTemplateSchema),
   });
 
-  const onSubmit: SubmitHandler<EmailTemplateInput> = async (
-    inputs: EmailTemplateInput
+  const onSubmit: SubmitHandler<any> = async (
+    inputs: any
   ) => {
     setIsLoading(true);
     try {

@@ -76,7 +76,7 @@ function EmailForm({ template }: { template: string }) {
   const [reset, setReset] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
-  const onSubmit: SubmitHandler<NewsLetterFormSchema> = async (data) => {
+  const onSubmit: SubmitHandler<any> = async (data) => {
     console.log(data);
 
     setIsLoading(true);

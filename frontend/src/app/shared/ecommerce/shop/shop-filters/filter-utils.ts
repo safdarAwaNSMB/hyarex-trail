@@ -272,25 +272,25 @@ export const categoriesData = [
 //   },
 // ];
 
-// export const ratingData = [
-//   {
-//     id: 1,
-//     products: 55,
-//   },
-//   {
-//     id: 2,
-//     products: 250,
-//   },
-//   {
-//     id: 3,
-//     products: 75,
-//   },
-//   {
-//     id: 4,
-//     products: 120,
-//   },
-//   {
-//     id: 5,
-//     products: 70,
-//   },
-// ];
+export const ratingData = [
+  {
+    id: 1,
+    products: 55,
+  },
+  {
+    id: 2,
+    products: 250,
+  },
+  {
+    id: 3,
+    products: 75,
+  },
+  {
+    id: 4,
+    products: 120,
+  },
+  {
+    id: 5,
+    products: 70,
+  },
+];

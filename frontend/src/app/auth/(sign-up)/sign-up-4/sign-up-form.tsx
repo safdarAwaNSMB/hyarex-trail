@@ -54,7 +54,7 @@ export default function SignUpForm() {
             />
             <div className="col-span-2 flex items-start text-gray-700">
               <Checkbox
-                {...register('isagreed')}
+                {...register('isAgreed')}
                 className="[&>label.items-center]:items-start [&>label>div.leading-none]:mt-0.5 [&>label>div.leading-none]:sm:mt-0 [&>label>span]:font-medium"
                 label={
                   <Text as="span" className="ps-1 text-gray-500">

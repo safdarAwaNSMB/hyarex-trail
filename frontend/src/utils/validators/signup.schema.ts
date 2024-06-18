@@ -14,6 +14,7 @@ export const signUpSchema = z.object({
   email: validateEmail,
   password: validateNewPassword,
   confirmpassword: validateConfirmPassword,
+  isAgreed : z.boolean()
 });
 
 

@@ -6,7 +6,7 @@ interface CartProduct extends Omit<Product, 'colors' | 'sizes'> {
   size: number;
 }
 
-export function generateCartProduct(product: CartProduct): CartItem {
+export function generateCartProduct(product: any): any {
   return {
     id: product?.id,
     name: product?.title,

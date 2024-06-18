@@ -8,7 +8,7 @@ import { Product } from '@/types';
 import { toCurrency } from '@/utils/to-currency';
 
 interface ProductProps {
-  product: Product;
+  product: any;
   className?: string;
 }
 

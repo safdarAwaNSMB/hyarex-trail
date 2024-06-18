@@ -7,8 +7,8 @@ import { SubmitHandler } from 'react-hook-form';
 import { Form } from '@/components/ui/form';
 import { routes } from '@/config/routes';
 import {
-  resetPasswordSchema,
-  ResetPasswordSchema,
+  changePasswordSchema,
+  ChangePasswordSchema,
 } from '@/utils/validators/reset-password.schema';
 
 const initialValues = {
@@ -20,15 +20,15 @@ const initialValues = {
 export default function ForgetPasswordForm() {
   const [reset, setReset] = useState({});
 
-  const onSubmit: SubmitHandler<ResetPasswordSchema> = (data) => {
+  const onSubmit: SubmitHandler<ChangePasswordSchema> = (data) => {
     console.log(data);
     setReset(initialValues);
   };
 
   return (
     <>
-      <Form<ResetPasswordSchema>
-        validationSchema={resetPasswordSchema}
+      <Form<ChangePasswordSchema>
+        validationSchema={changePasswordSchema}
         resetValues={reset}
         onSubmit={onSubmit}
         useFormProps={{
@@ -64,8 +64,8 @@ export default function ForgetPasswordForm() {
               size="lg"
               className="[&>label>span]:font-medium"
               inputClassName="text-sm"
-              {...register('confirmPassword')}
-              error={errors.confirmPassword?.message}
+              {...register('confirmpassword')}
+              error={errors.confirmpassword?.message}
             />
             <Button className="mt-2 w-full" type="submit" size="lg">
               Reset Password

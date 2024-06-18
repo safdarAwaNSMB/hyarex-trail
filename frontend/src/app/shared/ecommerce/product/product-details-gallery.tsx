@@ -45,7 +45,8 @@ export default function ProductDetailsGallery() {
             }}
             onClick={() => setShowIndex(index)}
           >
-            <img
+            <Image
+          
               src={image}
               alt={'Product Gallery'}
             className='w-full h-full object-cover rounded @xl:rounded-md'
