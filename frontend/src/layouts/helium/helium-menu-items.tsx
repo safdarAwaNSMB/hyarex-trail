@@ -36,10 +36,10 @@ import {
   PiHouseLine,
   PiAirplaneTilt,
   PiPokerChip,
-  PiFolderNotch,
   PiListNumbers,
   PiCaretCircleUpDown,
   PiBriefcase,
+  PiFolderDuotone,
 } from 'react-icons/pi';
 
 // Note: do not add href in the label object, it is rendering as label
@@ -52,7 +52,7 @@ export const menuItems = [
   {
     name: 'File Manager',
     href: '/',
-    icon: <PiFolderNotch />,
+    icon: <PiFolderDuotone />,
   },
   {
     name: 'Executive',
@@ -236,7 +236,7 @@ export const menuItems = [
   {
     name: 'File Manager',
     href: routes.file.manager,
-    icon: <PiFolderNotch />,
+    icon: <PiFolderDuotone />,
   },
   {
     name: 'Event Calendar',

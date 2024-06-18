@@ -34,11 +34,11 @@ import {
   PiLockKey,
   PiChatCenteredDots,
   PiCurrencyCircleDollar,
-  PiFolderNotch,
   PiHouseLine,
   PiAirplaneTilt,
   PiPokerChip,
   PiBriefcase,
+  PiFolderDuotone,
 } from 'react-icons/pi';
 
 // Note: do not add href in the label object, it is rendering as label
@@ -51,7 +51,7 @@ export const berylliumSidebarMenuItems = [
   {
     name: 'File Manager',
     href: '/',
-    icon: <PiFolderNotch />,
+    icon: <PiFolderDuotone />,
   },
   {
     name: 'Executive',
@@ -236,7 +236,7 @@ export const berylliumSidebarMenuItems = [
   {
     name: 'File Manager',
     href: routes.file.manager,
-    icon: <PiFolderNotch />,
+    icon: <PiFolderDuotone/>,
   },
   {
     name: 'Roles & Permissions',

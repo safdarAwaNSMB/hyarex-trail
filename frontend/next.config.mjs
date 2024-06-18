@@ -51,6 +51,15 @@ const nextConfig = {
     ],
   },
   reactStrictMode: false,
+  webpack: (config, { isServer }) => {
+    // Ensure Turbopack bindings are not used
+    if (isServer) {
+      config.resolve.alias['react-server-dom-webpack/server.edge'] = 'react-server-dom-webpack/server.edge';
+    } else {
+      config.resolve.alias['react-server-dom-webpack/server.edge'] = 'react-server-dom-webpack/client.edge';
+    }
+    return config;
+  },
 };
 
 export default nextConfig;

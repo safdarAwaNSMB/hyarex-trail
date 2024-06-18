@@ -35,10 +35,10 @@ import {
   PiBriefcaseDuotone,
   PiHouseLineDuotone,
   PiAirplaneTiltDuotone,
-  PiFolderNotchDuotone,
   PiCaretCircleUpDownDuotone,
   PiListNumbersDuotone,
   PiCoinDuotone,
+  PiFolderDuotone,
 } from 'react-icons/pi';
 import { routes } from '@/config/routes';
 import { DUMMY_ID } from '@/config/constants';
@@ -53,7 +53,7 @@ export const menuItems = [
   {
     name: 'File Manager',
     href: '/',
-    icon: PiFolderNotchDuotone,
+    icon: PiFolderDuotone,
     shortcut: {
       modifiers: 'alt',
       key: '1',
@@ -262,7 +262,7 @@ export const menuItems = [
   {
     name: 'File Manager',
     href: routes.file.manager,
-    icon: PiFolderNotchDuotone,
+    icon: PiFolderDuotone,
   },
   {
     name: 'Event Calendar',

@@ -37,7 +37,6 @@ import {
   PiBriefcaseDuotone,
   PiHouseLineDuotone,
   PiAirplaneTiltDuotone,
-  PiFolderNotchDuotone,
   PiCaretCircleUpDownDuotone,
   PiListNumbersDuotone,
   PiCoinDuotone,
@@ -48,7 +47,8 @@ import {
   PiHandCoinsDuotone,
   PiWechatLogoDuotone,
   PiBagDuotone,
-  PiAddressBookDuotone
+  PiAddressBookDuotone,
+  PiFolderDuotone
 } from 'react-icons/pi';
 
 
@@ -170,7 +170,7 @@ export const menuItems : any = [
   {
     name: 'File Manager',
     href: '/',
-    icon: <PiFolderNotchDuotone />,
+    icon: <PiFolderDuotone />,
   },
   {
     name: 'Executive',
@@ -355,7 +355,7 @@ export const menuItems : any = [
   {
     name: 'File Manager',
     href: routes.file.manager,
-    icon: <PiFolderNotchDuotone />,
+    icon: <PiFolderDuotone />,
   },
   {
     name: 'Event Calendar',

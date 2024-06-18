@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Fragment, JSXElementConstructor, PromiseLikeOfReactNode, ReactElement, ReactNode, ReactPortal } from 'react';
+import { Fragment, JSXElementConstructor, ReactElement, ReactNode, ReactPortal } from 'react';
 import { usePathname } from 'next/navigation';
 import { Title, Collapse } from 'rizzui';
 import cn from '@/utils/class-names';
@@ -69,7 +69,7 @@ export function SidebarMenu() {
                             </div>
                           )}
                         >
-                          {item?.dropdownItems?.map((dropdownItem: { href: string | UrlObject; name: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | PromiseLikeOfReactNode | null | undefined; badge: string | any[]; }, index: any) => {
+                          {item?.dropdownItems?.map((dropdownItem: { href: string | UrlObject; name: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal |  null | undefined; badge: string | any[]; }, index: any) => {
                             const isChildActive =
                               pathname === (dropdownItem?.href as string);
 
@@ -204,7 +204,7 @@ export function SidebarMenu() {
                             </div>
                           )}
                         >
-                          {item?.dropdownItems?.map((dropdownItem: { href: string | UrlObject; name: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | PromiseLikeOfReactNode | null | undefined; badge: string | any[]; }, index: any) => {
+                          {item?.dropdownItems?.map((dropdownItem: { href: string | UrlObject; name: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal |  null | undefined; badge: string | any[]; }, index: any) => {
                             const isChildActive =
                               pathname === (dropdownItem?.href as string);
 

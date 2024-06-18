@@ -19,8 +19,8 @@ import {
   PiEnvelopeSimpleOpen,
   PiFeather,
   PiFileImage,
+  PiFolderDuotone,
   PiFolderLock,
-  PiFolderNotch,
   PiGridFour,
   PiHammer,
   PiHeadset,
@@ -85,7 +85,7 @@ export const berylliumMenuItems: MenuItemsType[] = [
       {
         name: 'File Manager',
         href: '/',
-        icon: PiFolderNotch,
+        icon: PiFolderDuotone,
       },
       {
         name: 'Executive',

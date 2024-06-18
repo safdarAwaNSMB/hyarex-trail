@@ -20,8 +20,8 @@ import {
   PiEnvelopeSimpleOpenDuotone,
   PiFeatherDuotone,
   PiFileImageDuotone,
+  PiFolderDuotone,
   PiFolderLockDuotone,
-  PiFolderNotchDuotone,
   PiGridFourDuotone,
   PiHammerDuotone,
   PiHeadsetDuotone,
@@ -82,7 +82,7 @@ export const carbonMenuItems: MenuItemsType[] = [
       {
         name: 'File Manager',
         href: '/',
-        icon: PiFolderNotchDuotone,
+        icon: PiFolderDuotone,
       },
       {
         name: 'Executive',
