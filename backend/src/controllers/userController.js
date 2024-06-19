@@ -187,7 +187,7 @@ const sendResetEmail = async (req, res) => {
 
 const createBuyer = async (req, res) => {
   try {
-    // console.log(req.body);
+    console.log(req.body);
     client
       .query(
         `INSERT INTO users (firstname, lastname, email, password, userrole) VALUES ('${req.body.firstname}', '${req.body.lastname}', '${req.body.email}', '${req.body.password}', 'buyer') RETURNING *`
@@ -340,7 +340,7 @@ const updateUser = async (req, res) => {
     // console.log(req.body);
     const user = await client
       .query(
-        `UPDATE users SET avator = '${req.body.avatar?.url}', email = '${req.body.email}', firstname = '${req.body.first_name}', lastname = '${req.body.last_name}' WHERE email = '${req.body.email}' RETURNING *`
+        `UPDATE users SET  email = '${req.body.email}', firstname = '${req.body.first_name}', lastname = '${req.body.last_name}'  WHERE email = '${req.body.email}' RETURNING *`
       )
       .catch((err) => console.log(err));
 
