@@ -12,7 +12,7 @@ const createQuotation = async (req, res) => {
     );
     if (quotationExist.rows?.length === 0) {
       const query = {
-        text: `INSERT INTO quotations (useremail, products, increation, sendedfromcustomer) VALUES ($1, $2, $3, $4) RETURNING *`,
+        text: `INSERT INTO quotations (useremail, products, increation, sendedfromcustomer, commisionapplied) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
         values: [
           req.body.userEmail,
           [
@@ -24,6 +24,7 @@ const createQuotation = async (req, res) => {
           ],
           true,
           false,
+          false
         ],
       };
       await client
@@ -197,6 +198,89 @@ const approveQuotation = async (req, res) => {
   }
 };
 
+const acceptQuotation = async (req, res) => {
+  try {
+    const query = {
+      text: `UPDATE quotations
+                SET status = $1
+                WHERE id = $2`,
+      values: [
+        "Accepted",
+        req.params.quotationId,
+      ],
+    };
+
+    await client.query(query);
+
+    res.status(200).json({ sended: true });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Error in approving quotation" });
+  }
+};
+
+const denyQuotation = async (req, res) => {
+  try {
+    const query = {
+      text: `UPDATE quotations
+                SET status = $1
+                WHERE id = $2`,
+      values: [
+        "Denied",
+        req.params.quotationId,
+      ],
+    };
+
+    await client.query(query);
+
+    res.status(200).json({ sended: true });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Error in approving quotation" });
+  }
+};
+
+const buyerChangeRequest = async (req, res) => {
+  try {
+    const query = {
+      text: `UPDATE quotations
+                SET status = $1
+                WHERE id = $2`,
+      values: [
+        "Change Request from Buyer",
+        req.params.quotationId,
+      ],
+    };
+
+    await client.query(query);
+
+    res.status(200).json({ sended: true });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Error in approving quotation" });
+  }
+};
+const adminChangeRequest = async (req, res) => {
+  try {
+    const query = {
+      text: `UPDATE quotations
+                SET status = $1
+                WHERE id = $2`,
+      values: [
+        "Change Request from Admin",
+        req.params.quotationId,
+      ],
+    };
+
+    await client.query(query);
+
+    res.status(200).json({ sended: true });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Error in approving quotation" });
+  }
+};
+
 const offerQuotation = async (req, res) => {
   try {
     const offeredProducts = req.body.products.map((product) => {
@@ -245,9 +329,9 @@ const rejectQuotation = async (req, res) => {
   try {
     const query = {
       text: `UPDATE quotations
-                SET status = $1, selectedagent = $2, agentnotes = $3
-                WHERE id = $4`,
-      values: ["Rejected", null, null, req.params.quotationId],
+                SET status = $1
+                WHERE id = $2`,
+      values: ["Rejected", req.params.quotationId],
     };
 
     await client.query(query);
@@ -268,6 +352,7 @@ const getCustomerQuotations = async (req, res) => {
         quotations.increation,
         quotations.sendedfromcustomer,
         quotations.quotationdate,
+        quotations.commisionapplied,
         quotations.status,
           jsonb_build_object(
             'id', users.id,
@@ -331,6 +416,7 @@ const getAgentQuotations = async (req, res) => {
         quotations.sendedfromcustomer,
         quotations.quotationdate,
         quotations.agentnotes,
+        quotations.commisionapplied,
         quotations.status,
           jsonb_build_object(
             'id', users.id,
@@ -393,6 +479,7 @@ const getAllQuotations = async (req, res) => {
         quotations.increation,
         quotations.sendedfromcustomer,
         quotations.quotationdate,
+        quotations.commisionapplied,
         quotations.status,
           jsonb_build_object(
             'id', users.id,
@@ -554,5 +641,9 @@ module.exports = {
   rejectQuotation,
   getAgentQuotations,
   offerQuotation,
-  applyCommision
+  applyCommision,
+  acceptQuotation,
+  buyerChangeRequest,
+  denyQuotation,
+  adminChangeRequest
 };

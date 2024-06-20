@@ -1,15 +1,25 @@
 const { Pool, Client } = require('pg');
 
 const client = new Client({
-    host: 'dpg-cpoj2reehbks73ek34jg-a.oregon-postgres.render.com',
+    host: 'dpg-cpq0a1uehbks73ca3f2g-a.oregon-postgres.render.com',
     port: 5432,
-    database: 'trailhyarex',
+    database: 'hyarex_db',
     user: 'safdardev',
-    password: 'h9LtW83miTBidbmL7nmkO1kp1xNc9PI9',
+    password: 'G7na9tjTcxrTIfMg2Syz7eNK8BuUqVtj',
     ssl: {
         rejectUnauthorized: false
     }
 })
+
+// const client = new Client({
+//     host: 'localhost',
+//     port: 5432,
+//     database: 'Hyarex',
+//     user: 'Safdar',
+//     password: 'abc123ABC',
+// })
+
+
 
 client.connect().then(() => {
     console.log('Great! Postgresql is connected, Boost now!')

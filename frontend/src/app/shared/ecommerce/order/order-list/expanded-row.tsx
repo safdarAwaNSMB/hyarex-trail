@@ -57,6 +57,97 @@ export default function ExpandedOrderRow({
     }
   };
 
+  const acceptQuotation = async () => {
+    try {
+      
+        await axios
+          .post(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/accept-quotation/${record.id}`
+          )
+          .then((res) => {
+            toast.success('Quotation has been Accepted!');
+            reloadFunction();
+          })
+          .catch((err) => {
+            toast.error('Sorry, error!');
+          })
+          .finally(() => {
+            setSelectedAgent(null), setAgentNotes('');
+          });
+      
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const buyerChangeRequest = async () => {
+    try {
+      
+        await axios
+          .post(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/buyer-change-request/${record.id}`
+          )
+          .then((res) => {
+            toast.success('Change Request Sended!');
+            reloadFunction();
+          })
+          .catch((err) => {
+            toast.error('Sorry, error!');
+          })
+          .finally(() => {
+            setSelectedAgent(null), setAgentNotes('');
+          });
+      
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const adminChangeRequest = async () => {
+    try {
+      
+        await axios
+          .post(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin-change-request/${record.id}`
+          )
+          .then((res) => {
+            toast.success('Change Request Sended!');
+            reloadFunction();
+          })
+          .catch((err) => {
+            toast.error('Sorry, error!');
+          })
+          .finally(() => {
+            setSelectedAgent(null), setAgentNotes('');
+          });
+      
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const denyQuotation = async () => {
+    try {
+      
+        await axios
+          .post(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/deny-quotation/${record.id}`
+          )
+          .then((res) => {
+            toast.success('Quotation has been Denied!');
+            reloadFunction();
+          })
+          .catch((err) => {
+            toast.error('Sorry, error!');
+          })
+          .finally(() => {
+            setSelectedAgent(null), setAgentNotes('');
+          });
+      
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const applyCommision = async () => {
     try {
       const notFilled = products?.find(
@@ -242,6 +333,14 @@ export default function ExpandedOrderRow({
                     </Text>
                   </div>
                 )}
+              {(session.data?.userData?.userrole === 'buyer' &&
+                product.quotedPrice !== null && record.commisionapplied === true) && (
+                  <div className="w-full max-w-xs ps-4 md:w-1/2">
+                    <Text className="font-medium text-gray-900 dark:text-gray-700">
+                      Quoted Price : {product.quotedPrice + ((product.quotedPrice/100) * product.adminCommision)}$
+                    </Text>
+                  </div>
+                )}
               {session.data?.userData?.userrole === 'admin' &&
                 record.status === 'Quoted' && (
                   <div className="w-full max-w-xs ps-4 md:w-1/2">
@@ -277,7 +376,7 @@ export default function ExpandedOrderRow({
       ))}
 
       {session.data?.userData?.userrole === 'admin' &&
-        record?.status === 'Requested' && (
+        record?.status !== 'Quoted' && (
           <div className=" my-6 ">
             <div className="my-3 flex flex-row">
               <Select
@@ -322,7 +421,18 @@ export default function ExpandedOrderRow({
         record?.status === 'Quoted' && (
           <div className=" my-6 ">
             <div className=" my-3 flex flex-row justify-end gap-3">
+              <Button variant='outline' onClick={adminChangeRequest}>Request Change</Button>
+              <Button variant='outline' onClick={rejectQuotation}>Reject</Button>
               <Button onClick={applyCommision}>Apply Commisions</Button>
+            </div>
+          </div>
+        )}
+      {(session.data?.userData?.userrole === 'buyer' && record.status === 'Quoted' && record.commisionapplied === true) && (
+          <div className=" my-6 ">
+            <div className=" my-3 flex flex-row justify-end gap-3">
+              <Button variant='outline' onClick={denyQuotation}>Deny Quotation</Button>
+              <Button variant='outline' onClick={buyerChangeRequest}>Request Change</Button>
+              <Button onClick={acceptQuotation}>Accept Quotation</Button>
             </div>
           </div>
         )}
