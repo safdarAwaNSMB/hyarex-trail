@@ -7,6 +7,7 @@ router.post('/remove-from-current-quotation', quotationController.removeFromCurr
 router.post('/send-quotation', quotationController.sendQuotation)
 router.post('/approve-quotation/:quotationId', quotationController.approveQuotation)
 router.post('/offer-quotation/:quotationId', quotationController.offerQuotation)
+router.post('/apply-commisions/:quotationId', quotationController.applyCommision)
 router.post('/reject-quotation/:quotationId', quotationController.rejectQuotation)
 router.get('/get-customer-quotations/:userEmail', quotationController.getCustomerQuotations)
 router.get('/get-agent-quotations/:userEmail', quotationController.getAgentQuotations)

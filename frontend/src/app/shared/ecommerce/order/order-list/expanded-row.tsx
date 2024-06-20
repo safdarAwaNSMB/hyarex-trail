@@ -57,10 +57,52 @@ export default function ExpandedOrderRow({
     }
   };
 
+  const applyCommision = async () => {
+    try {
+      const notFilled = products?.find(
+        (product: any) =>
+          product.adminCommision === null ||
+          product.adminCommision === '' ||
+          product.adminCommision === undefined
+      );
+      if (notFilled) {
+        toast.error('Please Provide commision Percentage for all products!');
+      } else {
+        await axios
+          .post(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/apply-commisions/${record.id}`,
+            { products }
+          )
+          .then((res) => {
+            toast.success('Commsion has been added and sended to Buyer!');
+            reloadFunction();
+          })
+          .catch((err) => {
+            toast.error('Sorry, error!');
+          })
+          .finally(() => {
+            setSelectedAgent(null), setAgentNotes('');
+          });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const updateProducts = (index: number, quotedPrice: number | string) => {
     setProducts((prevProducts: any) => {
       const updatedProducts = [...prevProducts];
       updatedProducts[index] = { ...updatedProducts[index], quotedPrice };
+      return updatedProducts;
+    });
+  };
+  const addCommision = (index: number, commisionValue: number | string) => {
+    setProducts((prevProducts: any) => {
+      const updatedProducts = [...prevProducts];
+      updatedProducts[index] = {
+        ...updatedProducts[index],
+        adminCommision: commisionValue,
+      };
       return updatedProducts;
     });
   };
@@ -119,7 +161,7 @@ export default function ExpandedOrderRow({
       console.log(error);
     }
   };
-console.log(record);
+  console.log(record);
 
   return (
     <div className="grid grid-cols-1 divide-y bg-gray-0 px-3.5 dark:bg-gray-50">
@@ -127,9 +169,9 @@ console.log(record);
         <>
           <article
             key={product.productData?.offerId}
-            className="flex items-center justify-between py-6 first-of-type:pt-2.5 last-of-type:pb-2.5"
+            className="flex w-full items-center justify-between gap-3 py-6 first-of-type:pt-2.5 last-of-type:pb-2.5"
           >
-            <div className="flex items-start">
+            <div className="flex w-1/3 items-start justify-start">
               <div className="relative me-4 aspect-[80/60] w-20 flex-shrink-0 overflow-hidden rounded-md bg-gray-100">
                 <Image
                   fill
@@ -139,7 +181,7 @@ console.log(record);
                 />
               </div>
               <header>
-                <Title as="h4" className="mb-0.5 truncate text-sm font-medium">
+                <Title as="h4" className="mb-0.5 w-full text-sm font-medium">
                   {product.productData?.subjectTrans}
                 </Title>
                 <Text className="text-xs text-gray-500">
@@ -155,7 +197,7 @@ console.log(record);
                 </Text>
               </header>
             </div>
-            <div className="flex w-full max-w-xs items-center justify-between gap-4">
+            <div className="flex w-2/3  items-center justify-between gap-4">
               <div className="flex items-center">
                 <PiXBold size={13} className="me-1 text-gray-500" />{' '}
                 <Text
@@ -200,6 +242,24 @@ console.log(record);
                     </Text>
                   </div>
                 )}
+              {session.data?.userData?.userrole === 'admin' &&
+                record.status === 'Quoted' && (
+                  <div className="w-full max-w-xs ps-4 md:w-1/2">
+                    <Text className="font-medium text-gray-900 dark:text-gray-700">
+                      Admin Commision (%) :
+                      <NumberInput
+                        aria-label="Commision Percentage"
+                        formatType="numeric"
+                        placeholder="Commision Percentage"
+                        value={product?.adminCommision}
+                        onChange={(e) => {
+                          addCommision(index, e.target.value);
+                        }}
+                        customInput={Input as React.ComponentType<unknown>}
+                      />
+                    </Text>
+                  </div>
+                )}
             </div>
           </article>
           <div className=" mb-7 flex flex-row gap-3">
@@ -216,48 +276,57 @@ console.log(record);
         </>
       ))}
 
-      {session.data?.userData?.userrole === 'admin' && (
-        <div className=" my-6 ">
-          <div className="my-3 flex flex-row">
-            <Select
-              label="Select Agent"
-              className=" mx-2 w-full md:w-1/2"
-              options={agents.map((agent: any) => {
-                return {
-                  label: agent?.firstname,
-                  firstname: agent?.firstname,
-                  value: agent?.email,
-                  avator: agent?.firstname,
-                };
-              })}
-              value={selectedAgent}
-              onChange={(value: any) => setSelectedAgent(value)}
-              displayValue={(value) => renderDisplayValue(value)}
-              getOptionDisplayValue={(option) =>
-                renderOptionDisplayValue(option)
-              }
-            ></Select>
-            <Textarea
-              label="Note for Agent :"
-              placeholder="Notes about your order, e.g. special notes for delivery."
-              size="sm"
-              className="w-full md:w-1/2"
-              onChange={(e) => {
-                setAgentNotes(e.target.value);
-              }}
-              textareaClassName="h-20"
-            />
-          </div>
+      {session.data?.userData?.userrole === 'admin' &&
+        record?.status === 'Requested' && (
+          <div className=" my-6 ">
+            <div className="my-3 flex flex-row">
+              <Select
+                label="Select Agent"
+                className=" mx-2 w-full md:w-1/2"
+                options={agents.map((agent: any) => {
+                  return {
+                    label: agent?.firstname,
+                    firstname: agent?.firstname,
+                    value: agent?.email,
+                    avator: agent?.firstname,
+                  };
+                })}
+                value={selectedAgent}
+                onChange={(value: any) => setSelectedAgent(value)}
+                displayValue={(value) => renderDisplayValue(value)}
+                getOptionDisplayValue={(option) =>
+                  renderOptionDisplayValue(option)
+                }
+              ></Select>
+              <Textarea
+                label="Note for Agent :"
+                placeholder="Notes about your order, e.g. special notes for delivery."
+                size="sm"
+                className="w-full md:w-1/2"
+                onChange={(e) => {
+                  setAgentNotes(e.target.value);
+                }}
+                textareaClassName="h-20"
+              />
+            </div>
 
-          <div className=" my-3 flex flex-row justify-end gap-3">
-            <Button onClick={rejectQuotation} variant="outline">
-              Reject
-            </Button>
-            <Button onClick={approveQuotation}>Approve</Button>
+            <div className=" my-3 flex flex-row justify-end gap-3">
+              <Button onClick={rejectQuotation} variant="outline">
+                Reject
+              </Button>
+              <Button onClick={approveQuotation}>Approve</Button>
+            </div>
           </div>
-        </div>
-      )}
-      {(session.data?.userData?.userrole === 'agent' && record.agentnotes) && (
+        )}
+      {session.data?.userData?.userrole === 'admin' &&
+        record?.status === 'Quoted' && (
+          <div className=" my-6 ">
+            <div className=" my-3 flex flex-row justify-end gap-3">
+              <Button onClick={applyCommision}>Apply Commisions</Button>
+            </div>
+          </div>
+        )}
+      {session.data?.userData?.userrole === 'agent' && record.agentnotes && (
         <div className=" my-6 ">
           <Title as="h4" className="mb-0.5 truncate text-sm font-medium">
             Note for Agent :

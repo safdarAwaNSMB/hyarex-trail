@@ -219,6 +219,28 @@ const offerQuotation = async (req, res) => {
   }
 };
 
+const applyCommision = async (req, res) => {
+  try {
+    const commisionedProducts = req.body.products.map((product) => {
+      const { productData, ...simpleProduct } = product;
+      return simpleProduct;
+    });
+    const query = {
+      text: `UPDATE quotations
+                SET  products = $1, commisionApplied = $2
+                WHERE id = $3`,
+      values: [commisionedProducts, true, req.params.quotationId],
+    };
+
+    await client.query(query);
+
+    res.status(200).json({ sended: true });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Error in applying commision quotation" });
+  }
+};
+
 const rejectQuotation = async (req, res) => {
   try {
     const query = {
@@ -532,4 +554,5 @@ module.exports = {
   rejectQuotation,
   getAgentQuotations,
   offerQuotation,
+  applyCommision
 };

@@ -27,10 +27,12 @@ export default function ProductDetailsGallery() {
         height: "400px"
       }}>
         <Image
-          fill
+          
           priority
           src={productImages ? productImages[showIndex] : ""}
           alt={'Product Gallery'}
+          width={400}
+          height={400}
           // sizes="(max-width: 768px) 100vw"
           className="h-full w-full object-cover"
         />
@@ -46,7 +48,8 @@ export default function ProductDetailsGallery() {
             onClick={() => setShowIndex(index)}
           >
             <Image
-          
+              width={130}
+              height={100}
               src={image}
               alt={'Product Gallery'}
             className='w-full h-full object-cover rounded @xl:rounded-md'
