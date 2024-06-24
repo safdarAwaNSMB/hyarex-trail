@@ -570,6 +570,17 @@ export const getCustomerQuotations = async (userEmail : string)=>{
     throw error; // Re-throw the error for handling elsewhere if needed
   }
 }
+
+export const getSingleQuotation = async (id : string)=>{
+  try {
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/get-quotation-by-id/${id}`);
+    
+    return response.data; // Return the data from the response if needed
+  } catch (error) {
+    console.error('Error fetching quotations:', error);
+    throw error; // Re-throw the error for handling elsewhere if needed
+  }
+}
 export const getAgentQuotations = async (userEmail : string)=>{
   try {
     const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/get-agent-quotations/${userEmail}`);

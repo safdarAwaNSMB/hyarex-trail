@@ -1,6 +1,8 @@
+
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { PiXBold } from 'react-icons/pi';
@@ -28,6 +30,7 @@ export default function ExpandedOrderRow({
     setProducts(record?.products);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  const router = useRouter()
   if (record?.products?.length === 0) {
     return <Text>No product available</Text>;
   }
@@ -66,7 +69,7 @@ export default function ExpandedOrderRow({
           )
           .then((res) => {
             toast.success('Quotation has been Accepted!');
-            reloadFunction();
+            router.push('/quotations/' + record.id)
           })
           .catch((err) => {
             toast.error('Sorry, error!');
@@ -337,7 +340,7 @@ export default function ExpandedOrderRow({
                 product.quotedPrice !== null && record.commisionapplied === true) && (
                   <div className="w-full max-w-xs ps-4 md:w-1/2">
                     <Text className="font-medium text-gray-900 dark:text-gray-700">
-                      Quoted Price : {product.quotedPrice + ((product.quotedPrice/100) * product.adminCommision)}$
+                      Quoted Price : {Number(product.quotedPrice) + Number((product.quotedPrice/100) * product.adminCommision)}$
                     </Text>
                   </div>
                 )}
@@ -433,6 +436,15 @@ export default function ExpandedOrderRow({
               <Button variant='outline' onClick={denyQuotation}>Deny Quotation</Button>
               <Button variant='outline' onClick={buyerChangeRequest}>Request Change</Button>
               <Button onClick={acceptQuotation}>Accept Quotation</Button>
+            </div>
+          </div>
+        )}
+      {(session.data?.userData?.userrole === 'buyer' && record.status === 'Accepted' && record.commisionapplied === true) && (
+          <div className=" my-6 ">
+            <div className=" my-3 flex flex-row justify-end gap-3">
+              <Button onClick={()=>{
+                router.push('/quotations/' + record.id)
+              }}>Pay Quotation</Button>
             </div>
           </div>
         )}

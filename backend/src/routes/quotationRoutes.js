@@ -18,6 +18,7 @@ router.get('/get-agent-quotations/:userEmail', quotationController.getAgentQuota
 router.get('/get-all-quotations', quotationController.getAllQuotations)
 router.get('/get-all-agents', quotationController.getAllAgents)
 router.get('/get-user-current-quotation/:userEmail', quotationController.getUserCurrentQuotation)
+router.get('/get-quotation-by-id/:quotationId', quotationController.getQuotationById)
 // router.get('/get-ticket/:ticketId', supportController.getTicket)
 
 module.exports = router;

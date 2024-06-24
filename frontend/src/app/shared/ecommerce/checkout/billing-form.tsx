@@ -1,98 +1,82 @@
-import { Controller } from 'react-hook-form';
-import { Input, Title, Radio } from 'rizzui';
+import React, { useState } from 'react';
+import { Input, Title, Radio, Button } from 'rizzui';
 import { PhoneNumber } from '@/components/ui/phone-input';
+import { loadStripe } from '@stripe/stripe-js';
+import axios from 'axios';
 
-export default function BillingForm({ register, errors, control }: any) {
+export default function BillingForm({ quotation }: any) {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    phoneNumber: '',
+    companyName: '',
+    addressOne: '',
+    addressTwo: '',
+    city: '',
+    country: '',
+    zip: '',
+    state: '',
+    isSameShippingAddress: 'SameShippingAddress',
+  });
+
+  const [errors, setErrors] = useState({
+    firstName: '',
+    lastName: '',
+    companyName: '',
+    addressOne: '',
+    addressTwo: '',
+    city: '',
+    country: '',
+    zip: '',
+    state: '',
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handlePhoneNumberChange = (value: string) => {
+    setFormData({
+      ...formData,
+      phoneNumber: value,
+    });
+  };
+
+  const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      isSameShippingAddress: e.target.value,
+    });
+  };
+
+  const makePayment = async () => {
+    const stripe = await loadStripe(
+      'pk_test_51PNItb2NSA72NfBmF9gytCMva5aUh0c1imjeYZb8jq50uqI510nptlQvGpl0aLrsB6zvAdxsgEWr2eIn01QG890S006bKdMtXD'
+    );
+    const body = {
+      quotation,
+    };
+    const response: any = await axios.post(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/create-payment`,
+      body
+    );
+    const result: any = stripe?.redirectToCheckout({
+      sessionId: response.data.id,
+    });
+    if (result.error) {
+      console.log(result.error);
+    }
+  };
   return (
     <>
-      <Title as="h3" className="mb-3 font-semibold @2xl:mb-5">
-        Billing Information
-      </Title>
-      <div className="grid grid-cols-1 gap-3 @sm:grid-cols-2 @lg:gap-4 @2xl:gap-5">
-        <Input
-          label="First Name"
-          placeholder="first name"
-          {...register('firstName')}
-          error={errors.firstName?.message}
-        />
-        <Input
-          label="Last Name"
-          placeholder="last name"
-          {...register('lastName')}
-          error={errors.lastName?.message}
-        />
-        <Controller
-          name="phoneNumber"
-          control={control}
-          render={({ field: { value, onChange } }) => (
-            <PhoneNumber
-              label="Phone Number"
-              country="us"
-              value={value}
-              onChange={onChange}
-              className="rtl:[&>.selected-flag]:right-0"
-              inputClassName="rtl:pr-12"
-              buttonClassName="rtl:[&>.selected-flag]:right-2 rtl:[&>.selected-flag_.arrow]:-left-6"
-            />
-          )}
-        />
-        <Input
-          label="Company Name"
-          placeholder="company name"
-          {...register('companyName')}
-          error={errors.companyName?.message}
-        />
-        <Input
-          label="Address Line 1"
-          placeholder="address line 1"
-          {...register('addressOne')}
-          error={errors.addressOne?.message}
-        />
-        <Input
-          label="Address Line 2"
-          placeholder="address line 2"
-          {...register('addressTwo')}
-          error={errors.addressTwo?.message}
-        />
-        <Input
-          label="City"
-          placeholder="city"
-          {...register('city')}
-          error={errors.city?.message}
-        />
-        <Input
-          label="Country"
-          placeholder="country"
-          {...register('country')}
-          error={errors.country?.message}
-        />
-        <Input
-          label="Zip/Postcode"
-          placeholder="zip/postcode"
-          {...register('zip')}
-          error={errors.zip?.message}
-        />
-        <Input
-          label="State"
-          placeholder="state"
-          {...register('state')}
-          error={errors.state?.message}
-        />
-        <div className="flex flex-col space-y-5 pt-1 @sm:col-span-full">
-          <Radio
-            label="Shipping Address is the same as Billing Address"
-            value="SameShippingAddress"
-            {...register('isSameShippingAddress')}
-            inputClassName="dark:checked:!bg-gray-200 dark:checked:!border-muted dark:focus:ring-gray-200 dark:focus:ring-offset-gray-0"
-          />
-          <Radio
-            label="Different Shipping Address"
-            value="DifferentShippingAddress"
-            {...register('isSameShippingAddress')}
-            inputClassName="dark:checked:!bg-gray-200 dark:checked:!border-muted dark:focus:ring-gray-200 dark:focus:ring-offset-gray-0"
-          />
-        </div>
-      </div>
+      
+ 
+        <Button onClick={makePayment} className='w-1/2 mx-auto' size="lg">Proceed to Checkout</Button>
+ 
     </>
   );
 }

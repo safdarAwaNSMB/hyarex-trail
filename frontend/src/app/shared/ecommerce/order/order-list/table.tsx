@@ -68,8 +68,7 @@ export default function OrderTable({
     setIsLoading(true)
     if(session.data?.userData.userrole === 'buyer'){
       const data = await getCustomerQuotations(session.data?.userData?.email);
-      console.log(data);
-      
+
       setQuotations(data)
       setIsLoading(false);
     } else if(session.data?.userData?.userrole === 'admin' ){

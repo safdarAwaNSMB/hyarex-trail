@@ -374,7 +374,7 @@ const getCustomerQuotations = async (req, res) => {
         async (quotation, rowIndex) => {
           const updatedProductsPromises = quotation.products?.map(
             async (product, index) => {
-              console.log("product Id :" + product.productId);
+              
               const options = {
                 method: "GET",
                 url: `https://www.lovbuy.com/1688api/getproductinfo2.php?key=2c040d02c288e446a1d1709c90bb781a&item_id=${product.productId}&lang=en`,
@@ -394,8 +394,6 @@ const getCustomerQuotations = async (req, res) => {
         }
       );
       const updatedQuotations = await Promise.all(updatedQuotationsPromises);
-      console.log("after");
-      console.log(updatedQuotations);
       res.status(200).json(updatedQuotations);
     } else {
       res.status(200).json([]);
@@ -469,6 +467,67 @@ const getAgentQuotations = async (req, res) => {
     res.status(400).json({ message: "Error in getting quotations" });
   }
 };
+const getQuotationById = async (req, res) => {
+  try {
+    const quotations = await client.query(`
+        SELECT 
+        quotations.id,
+        quotations.type,
+        quotations.increation,
+        quotations.sendedfromcustomer,
+        quotations.quotationdate,
+        quotations.agentnotes,
+        quotations.commisionapplied,
+        quotations.status,
+          jsonb_build_object(
+            'id', users.id,
+            'name', users.firstname,
+            'email', users.email,
+            'role', users.userrole
+          ) AS customer,
+          quotations.products
+        FROM 
+          quotations
+          JOIN 
+          users ON quotations.useremail = users.email
+        WHERE quotations.id = '${req.params.quotationId}' `);
+      // console.log(req.params);
+    if (quotations?.rows?.length > 0) {
+      const updatedQuotationsPromises = quotations.rows.map(
+        async (quotation, rowIndex) => {
+          const updatedProductsPromises = quotation.products?.map(
+            async (product, index) => {
+              // console.log("product Id :" + product.productId);
+              const options = {
+                method: "GET",
+                url: `https://www.lovbuy.com/1688api/getproductinfo2.php?key=2c040d02c288e446a1d1709c90bb781a&item_id=${product.productId}&lang=en`,
+              };
+              const response = await axios
+                .request(options)
+                .catch((err) => console.log(err));
+              // console.log(response.data);
+              return {
+                ...product,
+                productData: response?.data?.result?.result,
+              };
+            }
+          );
+          const updatedProducts = await Promise.all(updatedProductsPromises);
+          return { ...quotation, products: updatedProducts };
+        }
+      );
+      const updatedQuotations = await Promise.all(updatedQuotationsPromises);
+      console.log("after");
+      console.log(updatedQuotations);
+      res.status(200).json(updatedQuotations);
+    } else {
+      res.status(200).json([]);
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Error in getting quotations" });
+  }
+};
 
 const getAllQuotations = async (req, res) => {
   try {
@@ -499,7 +558,7 @@ const getAllQuotations = async (req, res) => {
         async (quotation, rowIndex) => {
           const updatedProductsPromises = quotation.products?.map(
             async (product, index) => {
-              console.log("product Id :" + product.productId);
+              // console.log("product Id :" + product.productId);
               const options = {
                 method: "GET",
                 url: `https://www.lovbuy.com/1688api/getproductinfo2.php?key=2c040d02c288e446a1d1709c90bb781a&item_id=${product.productId}&lang=en`,
@@ -507,7 +566,7 @@ const getAllQuotations = async (req, res) => {
               const response = await axios
                 .request(options)
                 .catch((err) => console.log(err));
-              console.log(response.data);
+              // console.log(response.data);
               return {
                 ...product,
                 productData: response?.data?.result?.result,
@@ -645,5 +704,6 @@ module.exports = {
   acceptQuotation,
   buyerChangeRequest,
   denyQuotation,
-  adminChangeRequest
+  adminChangeRequest,
+  getQuotationById
 };

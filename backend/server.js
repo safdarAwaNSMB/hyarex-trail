@@ -1,4 +1,5 @@
 const express = require('express');
+require("dotenv").config()
 const cors = require('cors');
 const CreateUsersTable = require('./src/tables/usersTable');
 const userRoutes = require('./src/routes/userRoutes');
@@ -6,6 +7,7 @@ const wishlistRoutes = require('./src/routes/wishlist');
 const supportRoutes = require('./src/routes/supportRoutes')
 const messagesRoutes = require('./src/routes/messagesRoutes')
 const quotationRoutes = require('./src/routes/quotationRoutes')
+const paymentRoutes = require('./src/routes/paymentRoutes')
 const { CreateWishListsTable } = require('./src/tables/wishlists');
 const { CreateTicketsTable } = require('./src/tables/tickets');
 const { CreateMessagesTable } = require('./src/tables/messages');
@@ -68,6 +70,7 @@ app.use(wishlistRoutes)
 app.use(supportRoutes)
 app.use(messagesRoutes)
 app.use(quotationRoutes)
+app.use(paymentRoutes)
 
 
 app.listen(4000, () => {
