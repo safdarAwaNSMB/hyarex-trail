@@ -62,7 +62,7 @@ const getFavorites = async (req, res) => {
                 console.log(obj.productid);
                 const options = {
                     method: 'GET',
-                    url: `https://www.lovbuy.com/1688api/getproductinfo2.php?key=2c040d02c288e446a1d1709c90bb781a&item_id=${obj.productid}&lang=en`,
+                    url: `https://www.lovbuy.com/1688api/getproductinfo2.php?key=${process.env.API_KEY}&item_id=${obj.productid}&lang=en`,
                 };
                 const response = await axios.request(options).catch(err => console.log(err));
                 console.log(response.data);

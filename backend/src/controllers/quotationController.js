@@ -377,7 +377,7 @@ const getCustomerQuotations = async (req, res) => {
               
               const options = {
                 method: "GET",
-                url: `https://www.lovbuy.com/1688api/getproductinfo2.php?key=2c040d02c288e446a1d1709c90bb781a&item_id=${product.productId}&lang=en`,
+                url: `https://www.lovbuy.com/1688api/getproductinfo2.php?key=${process.env.API_KEY}&item_id=${product.productId}&lang=en`,
               };
               const response = await axios
                 .request(options)
@@ -439,7 +439,7 @@ const getAgentQuotations = async (req, res) => {
               console.log("product Id :" + product.productId);
               const options = {
                 method: "GET",
-                url: `https://www.lovbuy.com/1688api/getproductinfo2.php?key=2c040d02c288e446a1d1709c90bb781a&item_id=${product.productId}&lang=en`,
+                url: `https://www.lovbuy.com/1688api/getproductinfo2.php?key=${process.env.API_KEY}&item_id=${product.productId}&lang=en`,
               };
               const response = await axios
                 .request(options)
@@ -500,7 +500,7 @@ const getQuotationById = async (req, res) => {
               // console.log("product Id :" + product.productId);
               const options = {
                 method: "GET",
-                url: `https://www.lovbuy.com/1688api/getproductinfo2.php?key=2c040d02c288e446a1d1709c90bb781a&item_id=${product.productId}&lang=en`,
+                url: `https://www.lovbuy.com/1688api/getproductinfo2.php?key=${process.env.API_KEY}&item_id=${product.productId}&lang=en`,
               };
               const response = await axios
                 .request(options)
@@ -561,7 +561,7 @@ const getAllQuotations = async (req, res) => {
               // console.log("product Id :" + product.productId);
               const options = {
                 method: "GET",
-                url: `https://www.lovbuy.com/1688api/getproductinfo2.php?key=2c040d02c288e446a1d1709c90bb781a&item_id=${product.productId}&lang=en`,
+                url: `https://www.lovbuy.com/1688api/getproductinfo2.php?key=${process.env.API_KEY}&item_id=${product.productId}&lang=en`,
               };
               const response = await axios
                 .request(options)
@@ -636,7 +636,7 @@ const getUserCurrentQuotation = async (req, res) => {
           console.log(obj.productId);
           const options = {
             method: "GET",
-            url: `https://www.lovbuy.com/1688api/getproductinfo2.php?key=2c040d02c288e446a1d1709c90bb781a&item_id=${obj.productId}&lang=en`,
+            url: `https://www.lovbuy.com/1688api/getproductinfo2.php?key=${process.env.API_KEY}&item_id=${obj.productId}&lang=en`,
           };
           const response = await axios
             .request(options)
