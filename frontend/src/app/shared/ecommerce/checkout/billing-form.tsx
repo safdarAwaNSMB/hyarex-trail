@@ -55,7 +55,7 @@ export default function BillingForm({ quotation }: any) {
 
   const makePayment = async () => {
     const stripe = await loadStripe(
-      'pk_test_51PNItb2NSA72NfBmF9gytCMva5aUh0c1imjeYZb8jq50uqI510nptlQvGpl0aLrsB6zvAdxsgEWr2eIn01QG890S006bKdMtXD'
+      'pk_test_51PVelFLncap3kk7SBfaplb2mbm1bZP4ZtWKX5HUv6X5R0QPg0kL1eMVXKLnxImZR8xqlkz1G1o1OK3mo9dkXLa4c00TCwSh3AO'
     );
     const body = {
       quotation,
