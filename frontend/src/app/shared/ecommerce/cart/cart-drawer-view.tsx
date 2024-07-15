@@ -4,7 +4,7 @@ import Link from 'next/link';
 import isEmpty from 'lodash/isEmpty';
 import OrderProducts from '@/app/shared/ecommerce/checkout/order-products';
 import { toCurrency } from '@/utils/to-currency';
-import { Title, Text, Button, EmptyProductBoxIcon, Radio } from 'rizzui';
+import { Title, Text, Button, EmptyProductBoxIcon, Radio, Input } from 'rizzui';
 import cn from '@/utils/class-names';
 import { routes } from '@/config/routes';
 import { CartItem } from '@/types';
@@ -40,12 +40,13 @@ export default function CartDrawerView({
     { title: 'Wholesale', name: 'wholesale' },
   ];
   const [selectedType, setSelectedType] = useState<string>('');
+  const [address, setAddress] = useState<string>('');
   const isCartEmpty = isEmpty(items);
   const session: any = useSession();
   const [quotation, setQuotation] = useAtom(currentQuotation)
 
   const sendQuotation = async ()=>{
-    await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/send-quotation`, { userEmail: session?.data?.userData?.email, quotationType : selectedType }).then(res => {
+    await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/send-quotation`, { userEmail: session?.data?.userData?.email, quotationType : selectedType, address }).then(res => {
       setQuotation(null);
       setSelectedType('')
       setOpenDrawer(false)
@@ -96,6 +97,7 @@ export default function CartDrawerView({
                 inputClassName="dark:checked:!bg-gray-300 dark:checked:!border-gray-300 dark:focus:ring-gray-300 dark:focus:ring-offset-gray-0 my-1"
               />
             ))}
+            <Input placeholder='Delivery Address' type='text' onChange={(e)=>setAddress(e.target.value) } />
           </div>
         </>
       )}
@@ -115,7 +117,11 @@ export default function CartDrawerView({
           <Button
             onClick={()=>{
               if(selectedType?.length > 0){
-                sendQuotation()
+                if(address?.length > 10){
+                  sendQuotation()
+                } else {
+                toast.error('Please Provide complete correct Address!')
+                }
               } else {
                 toast.error('Please select quitation Type!')
               }

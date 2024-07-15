@@ -1,11 +1,11 @@
 const { Pool, Client } = require('pg');
 
 const client = new Client({
-    host: 'dpg-cpspvlqj1k6c738ss200-a.oregon-postgres.render.com',
+    host: 'dpg-cqac40iju9rs73bgpjcg-a.oregon-postgres.render.com',
     port: 5432,
-    database: 'hyarex_db_ck7o',
+    database: 'final_db_b617',
     user: 'hyarex_db_ck7o_user',
-    password: 'X351SGs19yLqLtSNWm6EHRZw9hXVLONU',
+    password: 'iwwyinAbpdZOmGy67NhPBqc9lz1wORHj',
     ssl: {
         rejectUnauthorized: false
     }

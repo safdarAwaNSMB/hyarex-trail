@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
@@ -30,7 +29,7 @@ export default function ExpandedOrderRow({
     setProducts(record?.products);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const router = useRouter()
+  const router = useRouter();
   if (record?.products?.length === 0) {
     return <Text>No product available</Text>;
   }
@@ -62,22 +61,20 @@ export default function ExpandedOrderRow({
 
   const acceptQuotation = async () => {
     try {
-      
-        await axios
-          .post(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/accept-quotation/${record.id}`
-          )
-          .then((res) => {
-            toast.success('Quotation has been Accepted!');
-            router.push('/quotations/' + record.id)
-          })
-          .catch((err) => {
-            toast.error('Sorry, error!');
-          })
-          .finally(() => {
-            setSelectedAgent(null), setAgentNotes('');
-          });
-      
+      await axios
+        .post(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/accept-quotation/${record.id}`
+        )
+        .then((res) => {
+          toast.success('Quotation has been Accepted!');
+          router.push('/quotations/' + record.id);
+        })
+        .catch((err) => {
+          toast.error('Sorry, error!');
+        })
+        .finally(() => {
+          setSelectedAgent(null), setAgentNotes('');
+        });
     } catch (error) {
       console.log(error);
     }
@@ -85,22 +82,20 @@ export default function ExpandedOrderRow({
 
   const buyerChangeRequest = async () => {
     try {
-      
-        await axios
-          .post(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/buyer-change-request/${record.id}`
-          )
-          .then((res) => {
-            toast.success('Change Request Sended!');
-            reloadFunction();
-          })
-          .catch((err) => {
-            toast.error('Sorry, error!');
-          })
-          .finally(() => {
-            setSelectedAgent(null), setAgentNotes('');
-          });
-      
+      await axios
+        .post(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/buyer-change-request/${record.id}`
+        )
+        .then((res) => {
+          toast.success('Change Request Sended!');
+          reloadFunction();
+        })
+        .catch((err) => {
+          toast.error('Sorry, error!');
+        })
+        .finally(() => {
+          setSelectedAgent(null), setAgentNotes('');
+        });
     } catch (error) {
       console.log(error);
     }
@@ -108,44 +103,40 @@ export default function ExpandedOrderRow({
 
   const adminChangeRequest = async () => {
     try {
-      
-        await axios
-          .post(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin-change-request/${record.id}`
-          )
-          .then((res) => {
-            toast.success('Change Request Sended!');
-            reloadFunction();
-          })
-          .catch((err) => {
-            toast.error('Sorry, error!');
-          })
-          .finally(() => {
-            setSelectedAgent(null), setAgentNotes('');
-          });
-      
+      await axios
+        .post(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin-change-request/${record.id}`
+        )
+        .then((res) => {
+          toast.success('Change Request Sended!');
+          reloadFunction();
+        })
+        .catch((err) => {
+          toast.error('Sorry, error!');
+        })
+        .finally(() => {
+          setSelectedAgent(null), setAgentNotes('');
+        });
     } catch (error) {
       console.log(error);
     }
   };
   const denyQuotation = async () => {
     try {
-      
-        await axios
-          .post(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/deny-quotation/${record.id}`
-          )
-          .then((res) => {
-            toast.success('Quotation has been Denied!');
-            reloadFunction();
-          })
-          .catch((err) => {
-            toast.error('Sorry, error!');
-          })
-          .finally(() => {
-            setSelectedAgent(null), setAgentNotes('');
-          });
-      
+      await axios
+        .post(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/deny-quotation/${record.id}`
+        )
+        .then((res) => {
+          toast.success('Quotation has been Denied!');
+          reloadFunction();
+        })
+        .catch((err) => {
+          toast.error('Sorry, error!');
+        })
+        .finally(() => {
+          setSelectedAgent(null), setAgentNotes('');
+        });
     } catch (error) {
       console.log(error);
     }
@@ -329,18 +320,24 @@ export default function ExpandedOrderRow({
                 </div>
               )}{' '}
               {session.data?.userData?.userrole === 'admin' &&
-                product.quotedPrice !== null && (
+                product?.quotedPrice?.length > 0 && (
                   <div className="w-full max-w-xs ps-4 md:w-1/2">
                     <Text className="font-medium text-gray-900 dark:text-gray-700">
                       Quoted Price : {product.quotedPrice}
                     </Text>
                   </div>
                 )}
-              {(session.data?.userData?.userrole === 'buyer' &&
-                product.quotedPrice !== null && record.commisionapplied === true) && (
+              {session.data?.userData?.userrole === 'buyer' &&
+                product?.quotedPrice?.length > 0 &&
+                record.commisionapplied === true && (
                   <div className="w-full max-w-xs ps-4 md:w-1/2">
                     <Text className="font-medium text-gray-900 dark:text-gray-700">
-                      Quoted Price : {Number(product.quotedPrice) + Number((product.quotedPrice/100) * product.adminCommision)}$
+                      Quoted Price :{' '}
+                      {Number(product.quotedPrice) +
+                        Number(
+                          (product.quotedPrice / 100) * product.adminCommision
+                        )}
+                      $
                     </Text>
                   </div>
                 )}
@@ -377,6 +374,17 @@ export default function ExpandedOrderRow({
           </div>
         </>
       ))}
+      <div className=" my-6 ">
+        <Title as="h4" className="mb-0.5 truncate text-sm font-medium">
+          Address :
+        </Title>
+        <Text
+          as="span"
+          className="font-medium text-gray-900 dark:text-gray-700"
+        >
+          {record.address}
+        </Text>
+      </div>
 
       {session.data?.userData?.userrole === 'admin' &&
         record?.status !== 'Quoted' && (
@@ -424,49 +432,181 @@ export default function ExpandedOrderRow({
         record?.status === 'Quoted' && (
           <div className=" my-6 ">
             <div className=" my-3 flex flex-row justify-end gap-3">
-              <Button variant='outline' onClick={adminChangeRequest}>Request Change</Button>
-              <Button variant='outline' onClick={rejectQuotation}>Reject</Button>
+              <Button variant="outline" onClick={adminChangeRequest}>
+                Request Change
+              </Button>
+              <Button variant="outline" onClick={rejectQuotation}>
+                Reject
+              </Button>
               <Button onClick={applyCommision}>Apply Commisions</Button>
             </div>
           </div>
         )}
-      {(session.data?.userData?.userrole === 'buyer' && record.status === 'Quoted' && record.commisionapplied === true) && (
+      {session.data?.userData?.userrole === 'buyer' &&
+        record.status === 'Quoted' &&
+        record.commisionapplied === true && (
           <div className=" my-6 ">
             <div className=" my-3 flex flex-row justify-end gap-3">
-              <Button variant='outline' onClick={denyQuotation}>Deny Quotation</Button>
-              <Button variant='outline' onClick={buyerChangeRequest}>Request Change</Button>
+              <Button variant="outline" onClick={denyQuotation}>
+                Deny Quotation
+              </Button>
+              <Button variant="outline" onClick={buyerChangeRequest}>
+                Request Change
+              </Button>
               <Button onClick={acceptQuotation}>Accept Quotation</Button>
             </div>
           </div>
         )}
-      {(session.data?.userData?.userrole === 'buyer' && record.status === 'Accepted' && record.commisionapplied === true) && (
+      {session.data?.userData?.userrole === 'buyer' &&
+        record.status === 'Accepted' &&
+        record.commisionapplied === true && (
           <div className=" my-6 ">
             <div className=" my-3 flex flex-row justify-end gap-3">
-              <Button onClick={()=>{
-                router.push('/quotations/' + record.id)
-              }}>Pay Quotation</Button>
+              <Button
+                onClick={() => {
+                  router.push('/quotations/' + record.id);
+                }}
+              >
+                Pay Quotation
+              </Button>
             </div>
           </div>
         )}
-      {session.data?.userData?.userrole === 'agent' && record.agentnotes && (
-        <div className=" my-6 ">
-          <Title as="h4" className="mb-0.5 truncate text-sm font-medium">
-            Note for Agent :
-          </Title>
-          <Text
-            as="span"
-            className="font-medium text-gray-900 dark:text-gray-700"
-          >
-            {record.agentnotes}
-          </Text>
-          <div className=" my-3 flex flex-row justify-end gap-3">
-            <Button onClick={offerQuotation}>Offer Quotation</Button>
+      {session.data?.userData?.userrole === 'agent' &&
+        record.status === 'Approved' && (
+          <div className=" my-6 ">
+            {record.agentnotes && (
+              <>
+                <Title as="h4" className="mb-0.5 truncate text-sm font-medium">
+                  Note for Agent :
+                </Title>
+                <Text
+                  as="span"
+                  className="font-medium text-gray-900 dark:text-gray-700"
+                >
+                  {record.agentnotes}
+                </Text>
+              </>
+            )}
+            <div className=" my-3 flex flex-row justify-end gap-3">
+              <Button onClick={offerQuotation}>Offer Quotation</Button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 }
+
+export const ExpandedOrderRowWareHouse = ({
+  record,
+  agents,
+  reloadFunction,
+}: any) => {
+  const session: any = useSession();
+  const [agentNotes, setAgentNotes] = useState('');
+  const [selectedAgent, setSelectedAgent] = useState<any>(null);
+  const [products, setProducts] = useState<any>(null);
+  useEffect(() => {
+    setProducts(record?.products);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const router = useRouter();
+  if (record?.products?.length === 0) {
+    return <Text>No product available</Text>;
+  }
+
+  return (
+    <div className="grid grid-cols-1 divide-y bg-gray-0 px-3.5 dark:bg-gray-50">
+      {products?.map((product: any, index: number) => (
+        <>
+          <article
+            key={product.productData?.offerId}
+            className="flex w-full items-center justify-between gap-3 py-6 first-of-type:pt-2.5 last-of-type:pb-2.5"
+          >
+            <div className="flex w-1/3 items-start justify-start">
+              <div className="relative me-4 aspect-[80/60] w-20 flex-shrink-0 overflow-hidden rounded-md bg-gray-100">
+                <Image
+                  fill
+                  className=" object-cover"
+                  src={product.productData?.productImage.images[0]}
+                  alt="Product image"
+                />
+              </div>
+              <header>
+                <Title as="h4" className="mb-0.5 w-full text-sm font-medium">
+                  {product.productData?.subjectTrans}
+                </Title>
+                <Text className="text-xs text-gray-500">
+                  {
+                    product?.productData?.productSaleInfo.priceRangeList[0]
+                      .startQuantity
+                  }{' '}
+                  Unit Price: $
+                  {
+                    product?.productData?.productSaleInfo.priceRangeList[0]
+                      .price
+                  }
+                </Text>
+              </header>
+            </div>
+            <div className="flex w-2/3  items-center justify-between gap-4">
+              <div className="flex items-center">
+                <PiXBold size={13} className="me-1 text-gray-500" />{' '}
+                <Text
+                  as="span"
+                  className="font-medium text-gray-900 dark:text-gray-700"
+                >
+                  {product.quantity}
+                </Text>
+              </div>
+              <Text className="font-medium text-gray-900 dark:text-gray-700">
+                Total : $
+                {Number(product.quantity) *
+                  Number(
+                    product?.productData?.productSaleInfo.priceRangeList[0]
+                      .price /
+                      product?.productData?.productSaleInfo.priceRangeList[0]
+                        .startQuantity
+                  )}
+              </Text>
+
+              {session.data?.userData?.userrole === 'admin' &&
+                product?.quotedPrice?.length > 0 && (
+                  <div className="w-full max-w-xs ps-4 md:w-1/2">
+                    <Text className="font-medium text-gray-900 dark:text-gray-700">
+                      Quoted Price : {product.quotedPrice}
+                    </Text>
+                  </div>
+                )}
+            </div>
+          </article>
+          <div className=" mb-7 flex flex-row gap-3">
+            <Title as="h4" className="mb-0.5 truncate text-sm font-medium">
+              Requirements :
+            </Title>
+            <Text
+              as="span"
+              className="font-medium text-gray-900 dark:text-gray-700"
+            >
+              {product.requirements}
+            </Text>
+          </div>
+        </>
+      ))}
+      <div className=" my-6 ">
+        <Title as="h4" className="mb-0.5 truncate text-sm font-medium">
+          Address :
+        </Title>
+        <Text
+          as="span"
+          className="font-medium text-gray-900 dark:text-gray-700"
+        >
+          {record.address}
+        </Text>
+      </div>
+    </div>
+  );
+};
 
 function renderDisplayValue(option: any) {
   console.log(option);

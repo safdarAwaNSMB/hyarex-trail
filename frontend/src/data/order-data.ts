@@ -559,6 +559,17 @@ export const getAllUsers = async ()=>{
     throw error; // Re-throw the error for handling elsewhere if needed
   }
 }
+export const getRevenue = async ()=>{
+  try {
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/get-total-revenue`);
+
+    
+    return response.data; // Return the data from the response if needed
+  } catch (error) {
+    console.error('Error fetching revenue:', error);
+    throw error; // Re-throw the error for handling elsewhere if needed
+  }
+}
 export const getCustomerQuotations = async (userEmail : string)=>{
   try {
     const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/get-customer-quotations/${userEmail}`);
@@ -595,6 +606,17 @@ export const getAgentQuotations = async (userEmail : string)=>{
 export const getAllQuotations = async ()=>{
   try {
     const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/get-all-quotations`);
+    console.log(response.data);
+    
+    return response.data; // Return the data from the response if needed
+  } catch (error) {
+    console.error('Error fetching quotations:', error);
+    throw error; // Re-throw the error for handling elsewhere if needed
+  }
+}
+export const getApprovedQuotations = async ()=>{
+  try {
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/get-approved-quotations`);
     console.log(response.data);
     
     return response.data; // Return the data from the response if needed

@@ -24,7 +24,7 @@ const createQuotation = async (req, res) => {
           ],
           true,
           false,
-          false
+          false,
         ],
       };
       await client
@@ -154,7 +154,7 @@ const sendQuotation = async (req, res) => {
   try {
     const query = {
       text: `UPDATE quotations
-                SET increation = $1, sendedfromcustomer = $2, type = $3, quotationdate = $5, status = $6
+                SET increation = $1, sendedfromcustomer = $2, type = $3, quotationdate = $5, status = $6, address = $7
                 WHERE useremail = $4`,
       values: [
         false,
@@ -163,6 +163,7 @@ const sendQuotation = async (req, res) => {
         req.body.userEmail,
         new Date(),
         "Requested",
+        req.body.address,
       ],
     };
 
@@ -204,10 +205,7 @@ const acceptQuotation = async (req, res) => {
       text: `UPDATE quotations
                 SET status = $1
                 WHERE id = $2`,
-      values: [
-        "Accepted",
-        req.params.quotationId,
-      ],
+      values: ["Accepted", req.params.quotationId],
     };
 
     await client.query(query);
@@ -225,10 +223,7 @@ const denyQuotation = async (req, res) => {
       text: `UPDATE quotations
                 SET status = $1
                 WHERE id = $2`,
-      values: [
-        "Denied",
-        req.params.quotationId,
-      ],
+      values: ["Denied", req.params.quotationId],
     };
 
     await client.query(query);
@@ -246,10 +241,7 @@ const buyerChangeRequest = async (req, res) => {
       text: `UPDATE quotations
                 SET status = $1
                 WHERE id = $2`,
-      values: [
-        "Change Request from Buyer",
-        req.params.quotationId,
-      ],
+      values: ["Change Request from Buyer", req.params.quotationId],
     };
 
     await client.query(query);
@@ -266,10 +258,7 @@ const adminChangeRequest = async (req, res) => {
       text: `UPDATE quotations
                 SET status = $1
                 WHERE id = $2`,
-      values: [
-        "Change Request from Admin",
-        req.params.quotationId,
-      ],
+      values: ["Change Request from Admin", req.params.quotationId],
     };
 
     await client.query(query);
@@ -353,6 +342,7 @@ const getCustomerQuotations = async (req, res) => {
         quotations.sendedfromcustomer,
         quotations.quotationdate,
         quotations.commisionapplied,
+        quotations.address,
         quotations.status,
           jsonb_build_object(
             'id', users.id,
@@ -374,7 +364,6 @@ const getCustomerQuotations = async (req, res) => {
         async (quotation, rowIndex) => {
           const updatedProductsPromises = quotation.products?.map(
             async (product, index) => {
-              
               const options = {
                 method: "GET",
                 url: `https://www.lovbuy.com/1688api/getproductinfo2.php?key=${process.env.API_KEY}&item_id=${product.productId}&lang=en`,
@@ -415,6 +404,7 @@ const getAgentQuotations = async (req, res) => {
         quotations.quotationdate,
         quotations.agentnotes,
         quotations.commisionapplied,
+        quotations.address,
         quotations.status,
           jsonb_build_object(
             'id', users.id,
@@ -478,6 +468,7 @@ const getQuotationById = async (req, res) => {
         quotations.quotationdate,
         quotations.agentnotes,
         quotations.commisionapplied,
+        quotations.address,
         quotations.status,
           jsonb_build_object(
             'id', users.id,
@@ -491,7 +482,7 @@ const getQuotationById = async (req, res) => {
           JOIN 
           users ON quotations.useremail = users.email
         WHERE quotations.id = '${req.params.quotationId}' `);
-      // console.log(req.params);
+    // console.log(req.params);
     if (quotations?.rows?.length > 0) {
       const updatedQuotationsPromises = quotations.rows.map(
         async (quotation, rowIndex) => {
@@ -539,6 +530,7 @@ const getAllQuotations = async (req, res) => {
         quotations.sendedfromcustomer,
         quotations.quotationdate,
         quotations.commisionapplied,
+        quotations.address,
         quotations.status,
           jsonb_build_object(
             'id', users.id,
@@ -558,7 +550,7 @@ const getAllQuotations = async (req, res) => {
         async (quotation, rowIndex) => {
           const updatedProductsPromises = quotation.products?.map(
             async (product, index) => {
-              // console.log("product Id :" + product.productId);
+              console.log("product Id :" + product.productId);
               const options = {
                 method: "GET",
                 url: `https://www.lovbuy.com/1688api/getproductinfo2.php?key=${process.env.API_KEY}&item_id=${product.productId}&lang=en`,
@@ -566,7 +558,7 @@ const getAllQuotations = async (req, res) => {
               const response = await axios
                 .request(options)
                 .catch((err) => console.log(err));
-              // console.log(response.data);
+              console.log(response.data);
               return {
                 ...product,
                 productData: response?.data?.result?.result,
@@ -584,6 +576,109 @@ const getAllQuotations = async (req, res) => {
     } else {
       res.status(200).json([]);
     }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Error in getting quotations" });
+  }
+};
+
+const getApprovedQuotations = async (req, res) => {
+  try {
+    const quotations = await client.query(`
+        SELECT 
+        quotations.id,
+        quotations.type,
+        quotations.increation,
+        quotations.sendedfromcustomer,
+        quotations.quotationdate,
+        quotations.commisionapplied,
+        quotations.address,
+        quotations.status,
+          jsonb_build_object(
+            'id', users.id,
+            'name', users.firstname,
+            'email', users.email,
+            'role', users.userrole
+          ) AS customer,
+          quotations.products
+        FROM 
+          quotations
+          JOIN 
+          users ON quotations.useremail = users.email
+        WHERE increation = '${false}' AND sendedfromcustomer = '${true}' AND status = 'Approved' OR status = 'Paid'`);
+
+    if (quotations?.rows?.length > 0) {
+      const updatedQuotationsPromises = quotations.rows.map(
+        async (quotation, rowIndex) => {
+          const updatedProductsPromises = quotation.products?.map(
+            async (product, index) => {
+              console.log("product Id :" + product.productId);
+              const options = {
+                method: "GET",
+                url: `https://www.lovbuy.com/1688api/getproductinfo2.php?key=${process.env.API_KEY}&item_id=${product.productId}&lang=en`,
+              };
+              const response = await axios
+                .request(options)
+                .catch((err) => console.log(err));
+              console.log(response.data);
+              return {
+                ...product,
+                productData: response?.data?.result?.result,
+              };
+            }
+          );
+          const updatedProducts = await Promise.all(updatedProductsPromises);
+          return { ...quotation, products: updatedProducts };
+        }
+      );
+      const updatedQuotations = await Promise.all(updatedQuotationsPromises);
+      console.log("after");
+      console.log(updatedQuotations);
+      res.status(200).json(updatedQuotations);
+    } else {
+      res.status(200).json([]);
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Error in getting quotations" });
+  }
+};
+
+const getTotalRevenue = async (req, res) => {
+  console.log('request for revenue');
+  try {
+    const quotations = await client.query(`
+        SELECT 
+        quotations.id,
+        quotations.type,
+        quotations.increation,
+        quotations.sendedfromcustomer,
+        quotations.quotationdate,
+        quotations.commisionapplied,
+        quotations.address,
+        quotations.status,
+          jsonb_build_object(
+            'id', users.id,
+            'name', users.firstname,
+            'email', users.email,
+            'role', users.userrole
+          ) AS customer,
+          quotations.products
+        FROM 
+          quotations
+          JOIN 
+          users ON quotations.useremail = users.email
+        WHERE status = 'Accepted' OR status = 'Paid'`);
+
+    let totalRevenue = 0;
+
+    quotations?.rows?.forEach((quotation) => {
+      quotation.products.forEach((product) => {
+        totalRevenue += product.quantity * product.quotedPrice;
+      });
+    });
+    console.log(totalRevenue);
+    res.status(200).json({totalRevenue});
   } catch (error) {
     console.log(error);
     res.status(400).json({ message: "Error in getting quotations" });
@@ -695,6 +790,7 @@ module.exports = {
   removeFromCurrentQuotation,
   sendQuotation,
   getAllQuotations,
+  getApprovedQuotations,
   getAllAgents,
   approveQuotation,
   rejectQuotation,
@@ -705,5 +801,6 @@ module.exports = {
   buyerChangeRequest,
   denyQuotation,
   adminChangeRequest,
-  getQuotationById
+  getQuotationById,
+  getTotalRevenue,
 };

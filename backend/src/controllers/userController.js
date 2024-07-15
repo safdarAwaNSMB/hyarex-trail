@@ -190,7 +190,7 @@ const createBuyer = async (req, res) => {
     console.log(req.body);
     client
       .query(
-        `INSERT INTO users (firstname, lastname, email, password, userrole) VALUES ('${req.body.firstname}', '${req.body.lastname}', '${req.body.email}', '${req.body.password}', 'buyer') RETURNING *`
+        `INSERT INTO users (firstname, lastname, email, password, userrole, signupdate) VALUES ('${req.body.firstname}', '${req.body.lastname}', '${req.body.email}', '${req.body.password}', 'buyer', '${new Date()}') RETURNING *`
       )
       .then((results) => {
         console.log(results.rows);
@@ -210,7 +210,7 @@ const createUser = async (req, res) => {
     // console.log(req.body);
     client
       .query(
-        `INSERT INTO users (firstname, lastname, email, password, userrole) VALUES ('${req.body.firstname}', '${req.body.lastname}', '${req.body.email}', '${req.body.password}', '${req.body.userrole}') RETURNING *`
+        `INSERT INTO users (firstname, lastname, email, password, userrole, signupdate) VALUES ('${req.body.firstname}', '${req.body.lastname}', '${req.body.email}', '${req.body.password}', '${req.body.userrole}', '${new Date()}') RETURNING *`
       )
       .then((results) => {
         console.log(results.rows);

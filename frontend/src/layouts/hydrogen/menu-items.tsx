@@ -50,6 +50,7 @@ import {
   PiAddressBookDuotone,
   PiFolderDuotone
 } from 'react-icons/pi';
+import { MdOutlineWarehouse } from 'react-icons/md';
 
 
 export const buyerMenuItems : any = [
@@ -68,37 +69,37 @@ export const buyerMenuItems : any = [
     href: '/quotations',
     icon: <PiBagDuotone />
   },
-  {
-    name: 'Reviews',
-    href: routes.eCommerce.reviews,
-    icon: <PiStarDuotone />
-  },
-  {
-    name: 'Cart',
-    href: routes.eCommerce.cart,
-    icon: <PiBagSimpleDuotone />,
-  },
-  {
-    name: 'Checkout & Payment',
-    href: routes.eCommerce.checkout,
-    icon: <PiHandCoinsDuotone />
-  },
+  // {
+  //   name: 'Reviews',
+  //   href: routes.eCommerce.reviews,
+  //   icon: <PiStarDuotone />
+  // },
+  // {
+  //   name: 'Cart',
+  //   href: routes.eCommerce.cart,
+  //   icon: <PiBagSimpleDuotone />,
+  // },
+  // {
+  //   name: 'Checkout & Payment',
+  //   href: routes.eCommerce.checkout,
+  //   icon: <PiHandCoinsDuotone />
+  // },
  
-  {
-    name: 'Real Estate',
-    href: routes.searchAndFilter.realEstate,
-    icon: <PiHouseLineDuotone />,
-  },
-  {
-    name: 'Flight Booking',
-    href: routes.searchAndFilter.flight,
-    icon: <PiAirplaneTiltDuotone />,
-  },
-  {
-    name: 'NFT',
-    href: routes.searchAndFilter.nft,
-    icon: <PiCoinDuotone />,
-  },
+  // {
+  //   name: 'Real Estate',
+  //   href: routes.searchAndFilter.realEstate,
+  //   icon: <PiHouseLineDuotone />,
+  // },
+  // {
+  //   name: 'Flight Booking',
+  //   href: routes.searchAndFilter.flight,
+  //   icon: <PiAirplaneTiltDuotone />,
+  // },
+  // {
+  //   name: 'NFT',
+  //   href: routes.searchAndFilter.nft,
+  //   icon: <PiCoinDuotone />,
+  // },
 
 ]
 export const adminMenuItems : any = [
@@ -123,40 +124,45 @@ export const adminMenuItems : any = [
     icon: <PiBagDuotone />
   },
   {
-    name: 'Reviews',
-    href: routes.eCommerce.reviews,
-    icon: <PiStarDuotone />
+    name: 'Orders',
+    href: '/warehouse',
+    icon: <MdOutlineWarehouse />
   },
-  {
-    name: 'Cart',
-    href: routes.eCommerce.cart,
-    icon: <PiBagSimpleDuotone />,
-  },
-  {
-    name: 'Checkout & Payment',
-    href: routes.eCommerce.checkout,
-    icon: <PiHandCoinsDuotone />
-  },
+  // {
+  //   name: 'Reviews',
+  //   href: routes.eCommerce.reviews,
+  //   icon: <PiStarDuotone />
+  // },
+  // {
+  //   name: 'Cart',
+  //   href: routes.eCommerce.cart,
+  //   icon: <PiBagSimpleDuotone />,
+  // },
+  // {
+  //   name: 'Checkout & Payment',
+  //   href: routes.eCommerce.checkout,
+  //   icon: <PiHandCoinsDuotone />
+  // },
   // {
   //   name: 'Inbox',
   //   href: routes.support.inbox,
   //   icon: <PiWechatLogoDuotone />
   // },
-  {
-    name: 'Real Estate',
-    href: routes.searchAndFilter.realEstate,
-    icon: <PiHouseLineDuotone />,
-  },
-  {
-    name: 'Flight Booking',
-    href: routes.searchAndFilter.flight,
-    icon: <PiAirplaneTiltDuotone />,
-  },
-  {
-    name: 'NFT',
-    href: routes.searchAndFilter.nft,
-    icon: <PiCoinDuotone />,
-  },
+  // {
+  //   name: 'Real Estate',
+  //   href: routes.searchAndFilter.realEstate,
+  //   icon: <PiHouseLineDuotone />,
+  // },
+  // {
+  //   name: 'Flight Booking',
+  //   href: routes.searchAndFilter.flight,
+  //   icon: <PiAirplaneTiltDuotone />,
+  // },
+  // {
+  //   name: 'NFT',
+  //   href: routes.searchAndFilter.nft,
+  //   icon: <PiCoinDuotone />,
+  // },
 
 ]
 

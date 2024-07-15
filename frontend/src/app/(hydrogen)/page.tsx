@@ -12,6 +12,12 @@ import CartDrawer from '../shared/ecommerce/cart/cart-drawer';
 import { CartProvider } from '@/store/quick-cart/cart.context';
 import WishlistDrawer from '../shared/ecommerce/cart/wishlist-drawer';
 import ExecutiveDashboard from '../shared/executive';
+import OrdersGraph from './ordersGraph';
+import UsersGraph from './usersGraph';
+import ValueCard from './value-card';
+import { PiCurrencyCircleDollar } from 'react-icons/pi';
+import { useEffect, useState } from 'react';
+import { getRevenue } from '@/data/order-data';
 
 // export const metadata = {
 //   ...metaObject('Shop'),
@@ -39,17 +45,46 @@ export default function FileDashboardPage() {
     ],
   };
 
+  const [revenue, setRevenue] = useState(null)
+  const getValue = async ()=>{
+    const data = await getRevenue()
+    setRevenue(data.totalRevenue)
+  }
+  useEffect(()=>{
+    getValue()
+  }, [])
 
   return (
     <>
-      {session?.data?.userData?.userrole === 'admin' || session?.data?.userData?.userrole == 'agent' ? (
+      {session?.data?.userData?.userrole === 'admin' ||
+      session?.data?.userData?.userrole == 'agent' ? (
         <>
-        <ExecutiveDashboard />
+          <div className="my-4">
+            {revenue && (
+
+              <ValueCard
+              transaction={{
+                title: 'Total Revenue',
+                amount: `$${revenue}`,
+                
+                icon: PiCurrencyCircleDollar,
+                iconWrapperFill: '#0070F3',
+              }}
+              className="min-w-[300px]"
+              />
+
+            )}
+            <UsersGraph />
+          </div>
+          <OrdersGraph />
         </>
       ) : (
         <>
           <CartProvider>
-            <PageHeader title={pageHeader.title} breadcrumb={pageHeader.breadcrumb}>
+            <PageHeader
+              title={pageHeader.title}
+              breadcrumb={pageHeader.breadcrumb}
+            >
               <FiltersButton placement="right" modalView={<ShopFilters />} />
             </PageHeader>
             <ProductFeed />
@@ -58,8 +93,6 @@ export default function FileDashboardPage() {
           </CartProvider>
         </>
       )}
-
     </>
   );
-
 }

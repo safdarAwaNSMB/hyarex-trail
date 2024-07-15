@@ -60,7 +60,8 @@ export default function SignUpForm() {
         } else if (userExist.status === 201) {
           const verificationcode = generateVerificationCode();
           await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/send-verification-Email`, { ...formData, verificationcode });
-          Cookies.set('pendingUser', JSON.stringify(formData), { expires: 1 });
+          Cookies.set('pendingUser', JSON.stringify({ ...formData, verificationcode }), { expires: 1 });
+          
           toast.success('Verification Email sent!');
           router.push('/auth/otp-4');
         }
