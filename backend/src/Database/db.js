@@ -4,7 +4,7 @@ const client = new Client({
     host: 'dpg-cqac40iju9rs73bgpjcg-a.oregon-postgres.render.com',
     port: 5432,
     database: 'final_db_b617',
-    user: 'hyarex_db_ck7o_user',
+    user: 'final_db_b617_user',
     password: 'iwwyinAbpdZOmGy67NhPBqc9lz1wORHj',
     ssl: {
         rejectUnauthorized: false
